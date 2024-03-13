@@ -44,28 +44,15 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffF4F0E8),
-      appBar: AppBar(
-        toolbarHeight: 100,
-        title: const Text("WeFixIT",
-        style: TextStyle(
-            fontSize: 25,
-        ),),
-        backgroundColor: Colors.white,
-        actions: const [
-          TextButton(onPressed: null, child: Text(
-            "Inicio Sesión usuario",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),),)
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(
-              color: Colors.red,
-              thickness: 15,),
-        ),
+      appBar: const MyAppBar(
+        action: TextButton(
+          onPressed: null,
+           child: Text(
+          "Inicio Sesión usuario",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,),),),
       ),
       body: Center(
         child: SizedBox(

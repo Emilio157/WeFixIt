@@ -2,8 +2,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:we_fix_it/ui/widgets/widgethome.dart';
-
+import 'package:we_fix_it/ui/widgets/add_Data.dart';
+import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
+import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -15,13 +16,20 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Uint8List? _image;
-  String text = '';
-  late TextEditingController controller;
+  final TextEditingController problemController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
   TextEditingController _date = TextEditingController();
   List<String> items = ['Orientacion', 'Presencialmente'];
   String? selectedItem = 'Orientacion';
 
-
+  void saveReport() async {
+    String problem = problemController.text;
+    String description = descriptionController.text;
+    String date = _date.text;
+    
+    String resp = await StoreData().saveData(problem: problem, description: description, date: date, file: _image!);
+  }
 
   @override
   void selectImage() async{
@@ -29,22 +37,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    controller = TextEditingController();
-  }
-
-  @override
-  void dispose () {
-    controller.dispose();
-    super.dispose();
-  }
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+      appBar: const MyAppBar(
+        action: TextButton(
+          onPressed: null,
+           child: Text(
+          "Usuario",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,),),),
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 40, right: 40),
@@ -58,12 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 20),
             Text('Problema'),
             TextField(
-              controller: controller,
-              onSubmitted: (String value) {
-                setState(() {
-                  text = controller.text;
-                });
-              },
+              controller: problemController,
             ),
             const SizedBox(height: 20),
             Text('Descripción del problema'),
@@ -71,12 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
               minLines: 1,
               maxLines: 10,
               decoration: InputDecoration(border: OutlineInputBorder()),
-              controller: controller,
-              onSubmitted: (String value) {
-                setState(() {
-                  text = controller.text;
-                });
-              },
+              controller: descriptionController,
             ),
             const SizedBox(height: 20),
             Text('Fecha Límite'),

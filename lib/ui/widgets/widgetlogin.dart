@@ -1,5 +1,41 @@
 import 'package:flutter/material.dart';
 
+class MyAppBar extends StatelessWidget implements PreferredSizeWidget{
+  final action;
+  const MyAppBar({super.key,
+  required this.action,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 100,
+          title: const Text("WeFixIT",
+            style: TextStyle(
+              fontSize: 25,
+            ),),
+          backgroundColor: Colors.white,
+          actions:[
+            action,
+          ],
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(
+              color: Colors.red,
+              thickness: 15,),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  // TODO: implement preferredSize
+  Size get preferredSize => Size.fromHeight(100);
+}
+
 class MyButtonSignIn extends StatelessWidget {
   final String text;
   final Function()? onTap;
