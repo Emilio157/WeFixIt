@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1006387415222",
+    "project_id": "dispositivos-7daf3",
+    "storage_bucket": "dispositivos-7daf3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006387415222:android:f52b7637d1b93b2450be17",
+        "android_client_info": {
+          "package_name": "com.example.we_fix_it"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvPGVO9ZNm-VRwKR_i0F2i0X2v2cmY4I4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

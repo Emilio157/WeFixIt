@@ -1,41 +1,45 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';  
+import 'package:flutter/widgets.dart';
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  const LoginPage({super.key,required this.onTap});
+  const RegisterPage({super.key,required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
-
+  final confirmpasswordController = TextEditingController();
   // methodo de ingreso WIP
-  void signUserIn() async{
+  void signUserUp() async{
     showDialog(context: context, builder: (context){
       return const Center(
         child: CircularProgressIndicator(),
       );
     },);
     try{
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email:emailController.text,
-      password: passwordController.text, 
+      if(passwordController.text==confirmpasswordController.text){
+         await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email:emailController.text,
+          password: passwordController.text, 
       );
-      Navigator.pop(context);
+      }else {
+        Navigator.pop(context);
+        showDialog(context: context, builder: (context){
+          return const AlertDialog(
+          title: Text('Contraseñas no coinciden'),
+        );
+      });
+      }
     } on FirebaseAuthException catch(e){
       Navigator.pop(context);
-      showDialog(context: context, builder: (context){
-      return const AlertDialog(
-        title: Text('Credenciales incorrectas'),
-      );
-    });
+       
     }
     
   }
@@ -144,25 +148,20 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                 
                     const SizedBox(height: 10),
-                
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Olvide mi contraseña',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
+                    const SizedBox(height: 10),
+                    MyTextField(
+                      controller: confirmpasswordController,
+                      hintText: 'Vuelve a ingresar la contraseña',
+                      obscureText: true,
                     ),
+                
+                    const SizedBox(height: 10),
                 
                     const SizedBox(height: 25),
                 
                     MyButtonSignIn(
-                      text:"INICIAR SESION",
-                      onTap: signUserIn,
+                      text: "CREAR CUENTA",
+                      onTap: signUserUp ,
                     ),
                 
                     const SizedBox(height: 25),
@@ -177,14 +176,14 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '¿No tienes cuenta?',
+                          '¿Ya tienes cuenta?',
                           style: TextStyle(color: Colors.grey[700]),
                         ),
                         const SizedBox(width: 4),
                         GestureDetector(
                           onTap:widget.onTap ,
                           child: const Text(
-                            'Crear cuenta',
+                            'Ingresar a tu cuenta',
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
