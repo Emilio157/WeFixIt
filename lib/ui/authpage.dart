@@ -15,7 +15,7 @@ class AuthPage extends StatelessWidget{
             builder: (context, snapshot){
               //existe usuario
               if(snapshot.hasData){
-                return MyHomePage(title:"d"); 
+                return HomePage(); 
               }
               //no existe el usuario
               else{
