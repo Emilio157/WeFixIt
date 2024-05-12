@@ -1,22 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
   const RegisterPage({super.key,required this.onTap});
-
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final emailController = TextEditingController();
+class _RegisterPageState extends State<RegisterPage>{
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final confirmpasswordController = TextEditingController();
 
-  final passwordController = TextEditingController();
-  final confirmpasswordController = TextEditingController();
-  // methodo de ingreso WIP
   void signUserUp() async{
     showDialog(context: context, builder: (context){
       return const Center(
@@ -38,168 +36,258 @@ class _RegisterPageState extends State<RegisterPage> {
       });
       }
     } on FirebaseAuthException catch(e){
-      Navigator.pop(context);
-       
+      Navigator.pop(context);    
     }
-    
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xffF4F0E8),
-      appBar: AppBar(
-        toolbarHeight: 100,
-        title: const Text("WeFixIT",
-        style: TextStyle(
-            fontSize: 25,
-        ),),
-        backgroundColor: Colors.white,
-        actions: const [
-          TextButton(onPressed: null, child: Text(
-            "Inicio Sesión usuario",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),),)
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(
-              color: Colors.red,
-              thickness: 15,),
+  }    
+
+  Widget buildEmail() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "Ingresa tu correo electrónico",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-      body: Center(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.8,
-          width: MediaQuery.of(context).size.width * 0.9,
-          child:  Container(
-            decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(40),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),)
-                ]
+        SizedBox(height: 10),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0,2)
+              )
+            ]
+          ),
+          height: 60,
+          child: TextField(
+            controller: emailController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(
+              color: Colors.black87
             ),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.gavel_rounded,
-                      size: 100,
-                    ),
-                
-                    const SizedBox(height: 50),
-                
-                    const Text(
-                      'Inicia Sesión con tu correo y contraseña para acceder',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
-                
-                
-                    const SizedBox(height: 25),
-                
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child:Text(
-                        '       Correo electrónico',
-                        style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,)
-                      ),
-                    ),
-                    MyTextField(
-                      controller: emailController,
-                      hintText: 'Ingresa tu correo electrónico',
-                      obscureText: false,
-                    ),
-                
-                    const SizedBox(height: 10),
-                
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child:Text(
-                          '       Contraseña',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,)
-                      ),
-                    ),
-                
-                    const SizedBox(height: 10),
-                    MyTextField(
-                      controller: passwordController,
-                      hintText: 'Ingresa tu contraseña',
-                      obscureText: true,
-                    ),
-                
-                    const SizedBox(height: 10),
-                    const SizedBox(height: 10),
-                    MyTextField(
-                      controller: confirmpasswordController,
-                      hintText: 'Vuelve a ingresar la contraseña',
-                      obscureText: true,
-                    ),
-                
-                    const SizedBox(height: 10),
-                
-                    const SizedBox(height: 25),
-                
-                    MyButtonSignIn(
-                      text: "CREAR CUENTA",
-                      onTap: signUserUp ,
-                    ),
-                
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(
-                        color: Colors.black,
-                        thickness: 1,),
-                    ),
-                
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '¿Ya tienes cuenta?',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap:widget.onTap ,
-                          child: const Text(
-                            'Ingresar a tu cuenta',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.email,
+                color: Color(0xFFAC18E),
               ),
+              hintText: "usuario@ejemplo.com",
+              hintStyle: TextStyle(
+                color: Colors.black38,
+              )
+            )
+          )
+        )
+      ]
+    );
+  }
+
+  Widget buildPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "Contraseña",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0,2)
+              )
+            ]
+          ),
+          height: 60,
+          child: TextField(
+            controller: passwordController,
+            obscureText: true,
+            style: TextStyle(
+              color: Colors.black87
             ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Color(0xFFAC18E),
+              ),
+              hintText: "Contraseña",
+              hintStyle: TextStyle(
+                color: Colors.black38,
+              )
+            )
+          )
+        ),
+
+        const SizedBox(height: 25),
+
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0,2)
+              )
+            ]
+          ),
+          height: 60,
+          child: TextField(
+            controller: confirmpasswordController,
+            obscureText: true,
+            style: TextStyle(
+              color: Colors.black87
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Color(0xFFAC18E),
+              ),
+              hintText: "Vuelve a ingresar la contraseña",
+              hintStyle: TextStyle(
+                color: Colors.black38,
+              )
+            )
+          )
+        )
+      ]
+    );
+  }
+
+
+  Widget buildSignInBtn(){
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25),
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          elevation: 5,
+          padding: EdgeInsets.all(15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        onPressed: signUserUp,
+        child: Text(
+          "Crear Cuenta",
+          style: TextStyle(
+            color: Color(0xFFFF0000),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildLogInBtn() {
+    return GestureDetector(
+      onTap: widget.onTap ,
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: "¿Ya tienes cuenta? ",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500
+              ),
+            ),
+            TextSpan(
+              text: "Ingresa a tu cuenta",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold
+                )
+            )
+          ]
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: GestureDetector(
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0x33FF0000),
+                      Color(0x77FF0000),
+                      Color(0xBBFF0000),
+                      Color(0xFFFF0000),
+                    ]
+                  )
+                ),
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 25,
+                    vertical: 120
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Crear Cuenta", 
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        )
+                      ),
+                      SizedBox(height: 50),
+                      buildEmail(),
+                      SizedBox(height: 20),
+                      buildPassword(),
+                      buildSignInBtn(),
+                      buildLogInBtn(),
+                    ]
+                  ),
+                ),
+              )
+            ]
+          )
+        ),
+      )
     );
   }
 }

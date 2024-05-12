@@ -18,7 +18,7 @@ class _MyWidgetState extends State<LoginOrRegisterPage> {
   @override
   Widget build(BuildContext context) {
     if(showLoginPage){
-      return LoginPage(
+      return LoginScreen(
         onTap:togglePages,
       );
     }
