@@ -1,11 +1,7 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:we_fix_it/ui/report_page.dart'; 
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart'; 
-import 'package:we_fix_it/ui/widgets/widgethome.dart'; 
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -144,13 +140,14 @@ class _MyLogOutState extends State<MyLogOut> {
           child: Column(
             children: [
               const SizedBox(height: 25),
-
               Text("¿Esta seguro que desea cerrar sesión?", style: TextStyle(fontSize: 18),),
 
               const SizedBox(height: 25),
 
               ElevatedButton(
-              onPressed: (){},
+              onPressed: () async{
+                await FirebaseAuth.instance.signOut();
+              },
               style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 254, 182, 15),
                     foregroundColor: Colors.black,

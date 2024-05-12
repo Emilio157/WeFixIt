@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-// import 'package:we_fix_it/ui/widgets/add_Data.dart';
 import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 

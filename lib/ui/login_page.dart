@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,27 +13,28 @@ class _LoginScreenState extends State<LoginScreen>{
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
 
-  void signUserIn() async{
-    showDialog(context: context, builder: (context){
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    },);
-    try{
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email:emailController.text,
-      password: passwordController.text, 
-      );
-      Navigator.pop(context);
-    } on FirebaseAuthException catch(e){
-        Navigator.pop(context);
-        showDialog(context: context, builder: (context){
-        return const AlertDialog(
-          title: Text('Credenciales incorrectas'),
-        );
-      });
-    }
-  }    
+  void signUserIn(BuildContext context) async {
+  showDialog(
+    context: context,
+    builder: (context) => const Center(child: CircularProgressIndicator()),
+  );
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+    Navigator.pop(context); 
+  } on FirebaseAuthException catch (e) {
+    Navigator.pop(context); 
+    showDialog(
+      context: context,
+      builder: (context) => const AlertDialog(
+        title: Text('Credenciales incorrectas'),
+      ),
+    );
+  }
+}
+    
 
   Widget buildEmail() {
     return Column(
@@ -167,7 +167,9 @@ class _LoginScreenState extends State<LoginScreen>{
             borderRadius: BorderRadius.circular(15),
           ),
         ),
-        onPressed: signUserIn,
+        onPressed: () {
+          signUserIn(context); 
+        },
         child: Text(
           "Iniciar Sesión",
           style: TextStyle(
