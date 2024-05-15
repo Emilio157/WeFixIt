@@ -1,43 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Importa Firestore
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  const RegisterPage({super.key,required this.onTap});
+  const RegisterPage({Key? key, required this.onTap});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage>{
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmpasswordController = TextEditingController();
+class _RegisterPageState extends State<RegisterPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmpasswordController = TextEditingController();
+  final nameController = TextEditingController(); // Controlador para el campo de nombre
+  bool selectedValue = false; // Valor inicial
 
-  void signUserUp() async{
-    showDialog(context: context, builder: (context){
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    },);
-    try{
-      if(passwordController.text==confirmpasswordController.text){
-         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email:emailController.text,
-          password: passwordController.text, 
-      );
-      }else {
-        Navigator.pop(context);
-        showDialog(context: context, builder: (context){
-          return const AlertDialog(
-          title: Text('Contraseñas no coinciden'),
+  void signUserUp() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
         );
-      });
+      },
+    );
+    try {
+      if (passwordController.text == confirmpasswordController.text) {
+        bool isContractor = selectedValue; // Obtener el valor seleccionado
+
+        // Crear el usuario en Firebase Authentication
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+
+        // Obtener el UID del usuario
+        String userId = userCredential.user!.uid;
+
+        // Guardar los datos del usuario en Firestore
+        Map<String, dynamic> userData = {
+          'Email': emailController.text,
+          'Name': nameController.text,
+          'Contractor': selectedValue,
+        };
+        try {
+         await FirebaseFirestore.instance.collection('Usuarios').doc(userId).set(userData);
+         } catch (e) {
+          print("Error storing user data in Firestore: $e");
+        }
+         Navigator.pop(context);
+
+
+        // También puedes navegar a otra pantalla o realizar otras acciones aquí después de registrar al usuario
+      } else {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              title: Text('Contraseñas no coinciden'),
+            );
+          },
+        );
       }
-    } on FirebaseAuthException catch(e){
-      Navigator.pop(context);    
+    } on FirebaseAuthException catch (e) {
+      print("Error al crear usuario: ${e.message}");
+      Navigator.pop(context);
     }
-  }    
+  }
 
   Widget buildEmail() {
     return Column(
@@ -61,16 +95,16 @@ class _RegisterPageState extends State<RegisterPage>{
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 6,
-                offset: Offset(0,2)
+                offset: Offset(0, 2),
               )
-            ]
+            ],
           ),
           height: 60,
           child: TextField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
-              color: Colors.black87
+              color: Colors.black87,
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -82,11 +116,11 @@ class _RegisterPageState extends State<RegisterPage>{
               hintText: "usuario@ejemplo.com",
               hintStyle: TextStyle(
                 color: Colors.black38,
-              )
-            )
-          )
-        )
-      ]
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -112,16 +146,16 @@ class _RegisterPageState extends State<RegisterPage>{
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 6,
-                offset: Offset(0,2)
+                offset: Offset(0, 2),
               )
-            ]
+            ],
           ),
           height: 60,
           child: TextField(
             controller: passwordController,
             obscureText: true,
             style: TextStyle(
-              color: Colors.black87
+              color: Colors.black87,
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -133,13 +167,11 @@ class _RegisterPageState extends State<RegisterPage>{
               hintText: "Contraseña",
               hintStyle: TextStyle(
                 color: Colors.black38,
-              )
-            )
-          )
+              ),
+            ),
+          ),
         ),
-
         const SizedBox(height: 25),
-
         Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
@@ -149,16 +181,16 @@ class _RegisterPageState extends State<RegisterPage>{
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 6,
-                offset: Offset(0,2)
+                offset: Offset(0, 2),
               )
-            ]
+            ],
           ),
           height: 60,
           child: TextField(
             controller: confirmpasswordController,
             obscureText: true,
             style: TextStyle(
-              color: Colors.black87
+              color: Colors.black87,
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -170,16 +202,117 @@ class _RegisterPageState extends State<RegisterPage>{
               hintText: "Vuelve a ingresar la contraseña",
               hintStyle: TextStyle(
                 color: Colors.black38,
-              )
-            )
-          )
+              ),
+            ),
+          ),
         )
-      ]
+      ],
     );
   }
 
+  Widget buildName() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "Nombre",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              )
+            ],
+          ),
+          height: 60,
+          child: TextField(
+            controller: nameController,
+            style: TextStyle(
+              color: Colors.black87,
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.person,
+                color: Color(0xFFAC18E),
+              ),
+              hintText: "Nombre",
+              hintStyle: TextStyle(
+                color: Colors.black38,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-  Widget buildSignInBtn(){
+  Widget buildType() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "Eres un contractor",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              )
+            ],
+          ),
+          child: DropdownButtonFormField<bool>(
+            value: selectedValue,
+            onChanged: (bool? newValue) {
+              setState(() {
+                selectedValue = newValue!;
+              });
+            },
+            items: [
+              DropdownMenuItem(
+                value: true,
+                child: Text("Si"),
+              ),
+              DropdownMenuItem(
+                value: false,
+                child: Text("No"),
+              ),
+            ],
+            decoration: InputDecoration(
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildSignInBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
@@ -207,7 +340,7 @@ class _RegisterPageState extends State<RegisterPage>{
 
   Widget buildLogInBtn() {
     return GestureDetector(
-      onTap: widget.onTap ,
+      onTap: widget.onTap,
       child: RichText(
         text: TextSpan(
           children: [
@@ -216,7 +349,7 @@ class _RegisterPageState extends State<RegisterPage>{
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
-                fontWeight: FontWeight.w500
+                fontWeight: FontWeight.w500,
               ),
             ),
             TextSpan(
@@ -224,10 +357,10 @@ class _RegisterPageState extends State<RegisterPage>{
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
-                fontWeight: FontWeight.bold
-                )
-            )
-          ]
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -253,40 +386,41 @@ class _RegisterPageState extends State<RegisterPage>{
                       Color(0x77FF0000),
                       Color(0xBBFF0000),
                       Color(0xFFFF0000),
-                    ]
-                  )
+                    ],
+                  ),
                 ),
                 child: SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     horizontal: 25,
-                    vertical: 120
+                    vertical: 40,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "Crear Cuenta", 
+                        "Crear Cuenta",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
-                        )
+                        ),
                       ),
-                      SizedBox(height: 50),
+                      SizedBox(height: 10),
+                      buildName(),
                       buildEmail(),
-                      SizedBox(height: 20),
                       buildPassword(),
+                      buildType(),
                       buildSignInBtn(),
                       buildLogInBtn(),
-                    ]
+                    ],
                   ),
                 ),
               )
-            ]
-          )
+            ],
+          ),
         ),
-      )
+      ),
     );
   }
 }
