@@ -2,11 +2,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 
 class MyReportPage extends StatefulWidget {
-  const MyReportPage({super.key, required this.title});
+  const MyReportPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
@@ -15,7 +17,7 @@ class MyReportPage extends StatefulWidget {
 
 class _MyReportPageState extends State<MyReportPage> {
   Uint8List? _image;
-  bool _imageSelected = false; 
+  bool _imageSelected = false;
   final TextEditingController problemController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
@@ -23,16 +25,60 @@ class _MyReportPageState extends State<MyReportPage> {
   List<String> items = ['Orientacion', 'Presencialmente'];
   String? selectedItem = 'Orientacion';
 
-  // void saveReport() async {
-  //   String problem = problemController.text;
-  //   String description = descriptionController.text;
-  //   String date = _date.text;
-    
-  //   String resp = await StoreData().saveData(problem: problem, description: description, date: date, file: _image!);
-  // }
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void selectImage() async{
-    Uint8List img = await pickImage(ImageSource.gallery);
+  Future<void> saveReport() async {
+    try {
+      if (_image != null && problemController.text.isNotEmpty && descriptionController.text.isNotEmpty && _date.text.isNotEmpty) {
+        // Subir imagen a Firebase Storage
+        final String imageUrl = await uploadImageToStorage('problemImage', _image!);
+
+        // Guardar datos en Firebase Firestore
+        await _firestore.collection('userProblems').add({
+          'problem': problemController.text,
+          'description': descriptionController.text,
+          'imageLink': imageUrl,
+          'date': _date.text,
+        });
+
+        // Limpiar campos después de enviar el reporte
+        setState(() {
+          _image = null;
+          _imageSelected = false;
+          problemController.clear();
+          descriptionController.clear();
+          _date.clear();
+        });
+
+        // Mostrar mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Reporte enviado con éxito')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Por favor complete todos los campos y seleccione una imagen')),
+        );
+      }
+    } catch (error) {
+      print('Error al enviar el reporte: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ocurrió un error al enviar el reporte')),
+      );
+    }
+  }
+
+  Future<String> uploadImageToStorage(String childName, Uint8List file) async {
+    try {
+      final Reference ref = _storage.ref().child(childName);
+      final UploadTask uploadTask = ref.putData(file);
+      final TaskSnapshot snapshot = await uploadTask;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (error) {
+      print("Error al subir la imagen: $error");
+      throw error;
+    }
   }
 
   @override
@@ -41,12 +87,15 @@ class _MyReportPageState extends State<MyReportPage> {
       appBar: const MyAppBar(
         action: TextButton(
           onPressed: null,
-           child: Text(
-          "Usuario",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,),),),
+          child: Text(
+            "Usuario",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+        ),
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 40, right: 40),
@@ -72,7 +121,6 @@ class _MyReportPageState extends State<MyReportPage> {
             TextField(
               controller: problemController,
               decoration: InputDecoration(
-                // Adjust border, hint text, etc. as needed
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -83,11 +131,10 @@ class _MyReportPageState extends State<MyReportPage> {
             Text('Descripción del problema'),
             TextField(
               decoration: InputDecoration(
-                // Adjust border, hint text, etc. as needed
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                hintText: 'Ingrese el problema',
+                hintText: 'Ingrese la descripción del problema',
               ),
               minLines: 1,
               maxLines: 10,
@@ -99,18 +146,18 @@ class _MyReportPageState extends State<MyReportPage> {
               controller: _date,
               decoration: const InputDecoration(
                 icon: Icon(Icons.calendar_today_rounded),
-                labelText: "Selecciona una fecha límite"
+                labelText: "Selecciona una fecha límite",
               ),
-              onTap: () async{
-                DateTime? pickeddate = await showDatePicker(
-                  context: context, 
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
                   initialDate: DateTime.now(),
-                  firstDate: DateTime(2000), 
-                  lastDate: DateTime(2101)
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2101),
                 );
-                if(pickeddate != null){
+                if (pickedDate != null) {
                   setState(() {
-                    _date.text = DateFormat('yyyy-MM-dd').format(pickeddate);
+                    _date.text = DateFormat('yyyy-MM-dd').format(pickedDate);
                   });
                 }
               },
@@ -142,22 +189,24 @@ class _MyReportPageState extends State<MyReportPage> {
               ),
             ),
             const SizedBox(height: 40),
-            Text('Metodo de contacto'),
+            Text('Método de contacto'),
             SizedBox(
               width: 320,
               child: DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(width: 2), // Adjust border width and color
+                    borderSide: const BorderSide(width: 2),
                   ),
                 ),
                 value: selectedItem,
                 items: items
-                    .map((item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item, style: const TextStyle(fontSize: 18)),
-                        ))
+                    .map(
+                      (item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item, style: const TextStyle(fontSize: 18)),
+                      ),
+                    )
                     .toList(),
                 onChanged: (item) => setState(() => selectedItem = item),
               ),
@@ -165,7 +214,7 @@ class _MyReportPageState extends State<MyReportPage> {
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
-                //saveReport
+                saveReport();
               },
               child: Text('Enviar Reporte'),
             ),

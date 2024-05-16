@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
   final Function()? onTap;
   const LoginScreen({super.key,required this.onTap});
@@ -24,6 +24,16 @@ class _LoginScreenState extends State<LoginScreen>{
       password: passwordController.text,
     );
     Navigator.pop(context); 
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
+    // Guardar el UID del usuario para usarlo en el futuro
+    // Puedes utilizar SharedPreferences o cualquier otro método de almacenamiento local
+    // para guardar el UID del usuario.
+    // Aquí te muestro un ejemplo utilizando SharedPreferences:
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('uid', uid!);
   } on FirebaseAuthException catch (e) {
     Navigator.pop(context); 
     showDialog(
