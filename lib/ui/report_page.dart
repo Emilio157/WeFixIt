@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 
@@ -20,7 +21,6 @@ class _MyReportPageState extends State<MyReportPage> {
   bool _imageSelected = false;
   final TextEditingController problemController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-
   TextEditingController _date = TextEditingController();
   List<String> items = ['Orientacion', 'Presencialmente'];
   String? selectedItem = 'Orientacion';
@@ -28,14 +28,25 @@ class _MyReportPageState extends State<MyReportPage> {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  Future<String?> getUserUid() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('uid');
+  }
+
   Future<void> saveReport() async {
     try {
+      final String? uid = await getUserUid();
+      if (uid == null) {
+        throw Exception('No se pudo recuperar el UID del usuario.');
+      }
+
       if (_image != null && problemController.text.isNotEmpty && descriptionController.text.isNotEmpty && _date.text.isNotEmpty) {
         // Subir imagen a Firebase Storage
         final String imageUrl = await uploadImageToStorage('problemImage', _image!);
 
         // Guardar datos en Firebase Firestore
         await _firestore.collection('userProblems').add({
+          'uid': uid,
           'problem': problemController.text,
           'description': descriptionController.text,
           'imageLink': imageUrl,

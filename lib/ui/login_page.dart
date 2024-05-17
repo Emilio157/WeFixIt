@@ -26,12 +26,6 @@ class _LoginScreenState extends State<LoginScreen>{
     Navigator.pop(context); 
     final User? user = FirebaseAuth.instance.currentUser;
     final String? uid = user?.uid;
-
-    // Guardar el UID del usuario para usarlo en el futuro
-    // Puedes utilizar SharedPreferences o cualquier otro método de almacenamiento local
-    // para guardar el UID del usuario.
-    // Aquí te muestro un ejemplo utilizando SharedPreferences:
-
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('uid', uid!);
   } on FirebaseAuthException catch (e) {
