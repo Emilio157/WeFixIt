@@ -34,8 +34,8 @@ class _RegisterPageState extends State<RegisterPage> {
         // Crear el usuario en Firebase Authentication
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
+            email: emailController.text,
+            password: passwordController.text,
         );
 
         // Obtener el UID del usuario
@@ -46,6 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
           'Email': emailController.text,
           'Name': nameController.text,
           'Contractor': selectedValue,
+          'UserId': userId,
         };
         try {
          await FirebaseFirestore.instance.collection('Usuarios').doc(userId).set(userData);
@@ -53,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
           print("Error storing user data in Firestore: $e");
         }
          Navigator.pop(context);
-
+         Navigator.pop(context);
 
         // También puedes navegar a otra pantalla o realizar otras acciones aquí después de registrar al usuario
       } else {
@@ -70,6 +71,12 @@ class _RegisterPageState extends State<RegisterPage> {
     } on FirebaseAuthException catch (e) {
       print("Error al crear usuario: ${e.message}");
       Navigator.pop(context);
+    }
+    finally {
+    // Asegúrate de que el diálogo de carga se cierra siempre
+    Navigator.pop(context);
+    Navigator.pop(context);
+    Navigator.pop(context);
     }
   }
 

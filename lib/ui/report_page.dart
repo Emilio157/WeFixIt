@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +8,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
-
+import 'dart:math';
+String generateRandomName() {
+  Random random = Random();
+  int randomNumber = random.nextInt(1000000); // Genera un número aleatorio entre 0 y 999999
+  return 'image_$randomNumber'; // Prefijo 'image_' seguido de un número aleatorio
+}
 class MyReportPage extends StatefulWidget {
   const MyReportPage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -29,20 +35,20 @@ class _MyReportPageState extends State<MyReportPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<String?> getUserUid() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('uid');
-  }
-
+  final User? user = FirebaseAuth.instance.currentUser;
+  return user?.uid;
+}
   Future<void> saveReport() async {
     try {
       final String? uid = await getUserUid();
       if (uid == null) {
         throw Exception('No se pudo recuperar el UID del usuario.');
       }
-
+      
       if (_image != null && problemController.text.isNotEmpty && descriptionController.text.isNotEmpty && _date.text.isNotEmpty) {
         // Subir imagen a Firebase Storage
-        final String imageUrl = await uploadImageToStorage('problemImage', _image!);
+        final String imageName = generateRandomName();
+        final String imageUrl = await uploadImageToStorage(imageName, _image!);
 
         // Guardar datos en Firebase Firestore
         await _firestore.collection('userProblems').add({

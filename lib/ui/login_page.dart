@@ -24,8 +24,8 @@ class _LoginScreenState extends State<LoginScreen>{
       password: passwordController.text,
     );
     Navigator.pop(context); 
-    final User? user = FirebaseAuth.instance.currentUser;
-    final String? uid = user?.uid;
+    final User? userId = FirebaseAuth.instance.currentUser;
+    final String? uid = userId?.uid;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('uid', uid!);
   } on FirebaseAuthException catch (e) {
