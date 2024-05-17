@@ -111,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.email,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "usuario@ejemplo.com",
               hintStyle: TextStyle(
@@ -162,7 +162,7 @@ class _RegisterPageState extends State<RegisterPage> {
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "Contraseña",
               hintStyle: TextStyle(
@@ -171,7 +171,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 10),
         Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
@@ -197,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "Vuelve a ingresar la contraseña",
               hintStyle: TextStyle(
@@ -247,7 +247,7 @@ class _RegisterPageState extends State<RegisterPage> {
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.person,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "Nombre",
               hintStyle: TextStyle(
@@ -408,10 +408,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: 10),
                       buildName(),
+                      SizedBox(height: 10),
                       buildEmail(),
+                      SizedBox(height: 10),
                       buildPassword(),
+                      SizedBox(height: 10),
                       buildType(),
+                      SizedBox(height: 10),
                       buildSignInBtn(),
+                      SizedBox(height: 10),
                       buildLogInBtn(),
                     ],
                   ),

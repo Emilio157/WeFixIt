@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen>{
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.email,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "usuario@ejemplo.com",
               hintStyle: TextStyle(
@@ -135,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen>{
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "Contraseña",
               hintStyle: TextStyle(
