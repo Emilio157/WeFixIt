@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 
-class MyHistorial extends StatelessWidget {
-  const MyHistorial({super.key});
+class ChatsUser extends StatelessWidget {
+  const ChatsUser({super.key});
 
   @override
   Widget build(BuildContext context) {

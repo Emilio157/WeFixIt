@@ -3,8 +3,8 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:we_fix_it/ui/homePages/diyPage.dart';
-import 'package:we_fix_it/ui/homePages/historialPage.dart';
+import 'package:we_fix_it/ui/contractorHomePages/chats_by_contractor.dart';
+import 'package:we_fix_it/ui/contractorHomePages/user_posts.dart';
 
 class HomePageContractor extends StatefulWidget {
   const HomePageContractor({super.key});
@@ -14,10 +14,10 @@ class HomePageContractor extends StatefulWidget {
 }
 
 class _HomePageContractorState extends State<HomePageContractor> {
-  int currentIndex = 1;  // Cambiado a un índice válido
+  int currentIndex = 1;  
   final pantallas = [
-    MyHistorial(),
-    MyDiy(),
+    ChatsContractor(),
+    UserPosts(),
   ];
 
   Future<String> _getUserName(String uid) async {
@@ -96,7 +96,7 @@ class _HomePageContractorState extends State<HomePageContractor> {
         items: const [
           CurvedNavigationBarItem(
             child: Icon(
-              Icons.history,
+              Icons.chat,
               color: Colors.white,
               size: 40,
             ),

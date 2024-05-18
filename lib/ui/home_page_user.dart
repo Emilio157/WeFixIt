@@ -4,7 +4,7 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/homePages/diyPage.dart';
-import 'package:we_fix_it/ui/homePages/historialPage.dart';
+import 'package:we_fix_it/ui/homePages/chatByUser.dart';
 import 'package:we_fix_it/ui/homePages/toolsPage.dart';
 import 'package:we_fix_it/ui/homePages/profilePage.dart';
 import 'homePages/homePage.dart';
@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentIndex = 2;
   final pantallas = [
-    MyHistorial(),
+    ChatsUser(),
     MyDiy(),
     MyInicio(),
     MyTools(),
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
         height: MediaQuery.of(context).size.height * 0.11,
         items: const [
           CurvedNavigationBarItem(
-            child: Icon(Icons.history,
+            child: Icon(Icons.chat,
             color: Colors.white,
             size: 40,),
           ),
@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
             size: 40,),
           ),
           CurvedNavigationBarItem(
-            child: Icon(Icons.person, //Icons.exit_to_app
+            child: Icon(Icons.person,
             color: Colors.white,
             size: 40,),
           ),

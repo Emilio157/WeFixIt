@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
   final Function()? onTap;
   const LoginScreen({super.key,required this.onTap});
@@ -14,21 +13,12 @@ class _LoginScreenState extends State<LoginScreen>{
     final passwordController = TextEditingController();
 
   void signUserIn(BuildContext context) async {
-  showDialog(
-    context: context,
-    builder: (context) => const Center(child: CircularProgressIndicator()),
-  );
   try {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: emailController.text,
       password: passwordController.text,
     );
-    Navigator.pop(context); 
-    final User? userId = FirebaseAuth.instance.currentUser;
-    final String? uid = userId?.uid;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('uid', uid!);
-  } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
     Navigator.pop(context); 
     showDialog(
       context: context,
