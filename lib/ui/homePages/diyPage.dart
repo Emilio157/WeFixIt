@@ -69,7 +69,7 @@ class _MyDiyState extends State<MyDiy> {
 
                 final projects = snapshot.data!.docs;
 
-                return ListView.builder(
+                return /* ListView.builder(
                   itemCount: projects.length,
                   itemBuilder: (context, index) {
                     final project = projects[index];
@@ -89,7 +89,92 @@ class _MyDiyState extends State<MyDiy> {
                       ),
                     );
                   },
-                );
+                ); */
+                ListView.builder(
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemCount: projects.length,
+                itemBuilder: (context, index) {
+                  final project = projects[index];
+                  return GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProjectDetailScreen(project: project),
+                        ),
+                      ),
+                    child: Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            padding: EdgeInsets.all(12),
+                            
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 3,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    project['imageLink'],
+                                    height: 100,
+                                    width: 100,
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        project['name'],
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        project['date'],
+                                        style: TextStyle(fontSize: 14),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      size: 24,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      _deleteProject(project.id);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Proyecto ' + project['name'] + ' fue elminiado'),
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ),
+                  );
+              },
+            );
               },
             ),
       floatingActionButton: FloatingActionButton(
@@ -114,23 +199,51 @@ class ProjectDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(project['name']),
+        toolbarHeight: 75,
+        title: Text(project['name'],
+        style: TextStyle( fontSize: 24, fontWeight: FontWeight.bold),),
+        bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(
+              color: Colors.red,
+              thickness: 15,),
+          ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(project['imageLink']),
-            const SizedBox(height: 8),
-            Text(
-              project['name'],
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Center(child: Image.network(project['imageLink'],
+              height: 300,
+              width: 300,)),
+            const SizedBox(height: 10),
+            const PreferredSize(
+              preferredSize: Size.fromHeight(1),
+              child: Divider(
+                color: Color.fromARGB(255, 255, 103, 92),
+                thickness: 5,),
+            ),
+            const SizedBox(height: 5),
+            Center(
+              child: Text(
+                project['name'],
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 5),
+            const PreferredSize(
+              preferredSize: Size.fromHeight(1),
+              child: Divider(
+                color: Color.fromARGB(255, 255, 103, 92),
+                thickness: 5,),
             ),
             const SizedBox(height: 8),
-            Text('Fecha: ${project['date']}'),
+            Text('Fecha del proyecto: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+            Text('${project['date']}', style: TextStyle(fontSize: 16),),
             const SizedBox(height: 8),
-            Text(project['description']),
+            Text('Descripción: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+            Text(project['description'], style: TextStyle(fontSize: 16),),
           ],
         ),
       ),

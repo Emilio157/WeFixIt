@@ -77,7 +77,8 @@ class _MyInicioState extends State<MyInicio> {
       Padding(  
         padding: const EdgeInsets.only(top: 60),
         child: Expanded(
-              child: ListView.builder(
+
+              /* child: ListView.builder(
                 itemCount: problems.length,
                 itemBuilder: (context, index) {
                   final problem = problems[index];
@@ -90,7 +91,68 @@ class _MyInicioState extends State<MyInicio> {
                         : null,
                   );
                 },
-            ),
+              ), */
+
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemCount: problems.length,
+                itemBuilder: (context, index) {
+                  final problem = problems[index];
+                  return Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  problem['imageLink'],
+                                  height: 100,
+                                  width: 100,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      problem['problem'],
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      problem['date'],
+                                      style: TextStyle(fontSize: 14),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                            ],
+                          ),
+                        );
+              },
+            )
             ),
       )
       ],             
