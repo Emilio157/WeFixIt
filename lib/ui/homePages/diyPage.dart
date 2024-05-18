@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:intl/intl.dart';
@@ -47,7 +51,8 @@ class _MyDiyState extends State<MyDiy> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("DIY Projects"),
+        title: const Text("DIY Projects",
+        style: TextStyle(fontWeight: FontWeight.bold,),),
       ),
       body: uid == null
           ? const Center(child: CircularProgressIndicator())
@@ -88,11 +93,13 @@ class _MyDiyState extends State<MyDiy> {
               },
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.red,
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => AddProjectScreen(uid: uid)),
         ),
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add,
+        color: Colors.white,),
       ),
     );
   }
@@ -204,7 +211,15 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add DIY Project'),
+        toolbarHeight: 75,
+        title: const Text('Add DIY Project',
+        style: TextStyle( fontSize: 24, fontWeight: FontWeight.bold),),
+        bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(
+              color: Colors.red,
+              thickness: 15,),
+          ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -212,7 +227,8 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Nombre del Proyecto'),
+              const Text('Nombre del Proyecto',
+            style: TextStyle(fontSize: 17)),
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
@@ -221,7 +237,8 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('Descripción del Proyecto'),
+              const Text('Descripción del Proyecto',
+            style: TextStyle(fontSize: 17)),
               TextField(
                 controller: descriptionController,
                 decoration: const InputDecoration(
@@ -231,7 +248,8 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 maxLines: 5,
               ),
               const SizedBox(height: 16),
-              const Text('Fecha'),
+              const Text('Fecha',
+            style: TextStyle(fontSize: 17)),
               TextField(
                 controller: _dateController,
                 decoration: const InputDecoration(
@@ -255,6 +273,13 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
                 onPressed: _selectImage,
                 child: Row(
                   children: [
@@ -265,9 +290,17 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _saveProject,
-                child: const Text('Guardar Proyecto'),
+              Center(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(Colors.red),
+                  ),
+                  onPressed: _saveProject,
+                  child: const Text('Guardar Proyecto', 
+                  style: TextStyle(color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),),
+                ),
               ),
             ],
           ),

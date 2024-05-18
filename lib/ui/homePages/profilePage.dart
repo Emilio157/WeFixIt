@@ -31,7 +31,7 @@ class _MyLogOutState extends State<MyLogOut> {
                 await FirebaseAuth.instance.signOut();
               },
               style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 254, 182, 15),
+                    backgroundColor: Colors.red,
                     foregroundColor: Colors.black,
                     shadowColor: Colors.black,
                     elevation: 3,
@@ -39,7 +39,7 @@ class _MyLogOutState extends State<MyLogOut> {
                         borderRadius: BorderRadius.circular(5)),
                     minimumSize: Size(250, 70), 
                   ),
-              child: const Text("Cerrar Sesión", style: TextStyle(fontSize: 24),),
+              child: const Text("Cerrar Sesión", style: TextStyle(fontSize: 24, color: Colors.white),),
             ),
             ]          
           ),

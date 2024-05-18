@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/homePages/diyPage.dart';
@@ -24,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     MyLogOut(),
   ];
 
-  List<Map<String, dynamic>> problems = [];
+  /* List<Map<String, dynamic>> problems = [];
 
   @override
   void initState() {
@@ -44,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         problems = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
       });
     }
-  }
+  } */
 
   Future<String> _getUserName(String uid) async {
     try {
@@ -107,56 +109,43 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: pantallas[currentIndex],
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: problems.length,
-                    itemBuilder: (context, index) {
-                      final problem = problems[index];
-                      return ListTile(
-                        title: Text(problem['problem']),
-                        subtitle: Text(problem['description']),
-                        trailing: problem['imageLink'] != null
-                            ? Image.network(problem['imageLink'], width: 50, height: 50)
-                            : null,
-                      );
-                    },
-                  ),
-                ),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+      bottomNavigationBar: CurvedNavigationBar(
+        index: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.red,
-        unselectedItemColor: Colors.black,
-        iconSize: 40,
-        selectedItemColor: Colors.white,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+        color: Colors.red,
+        backgroundColor: Colors.white,
+        buttonBackgroundColor: Colors.red,
+        height: MediaQuery.of(context).size.height * 0.11,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: "Historial",
+          CurvedNavigationBarItem(
+            child: Icon(Icons.history,
+            color: Colors.white,
+            size: 40,),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.palette),
-            label: "DIY",
+          CurvedNavigationBarItem(
+            child: Icon(Icons.palette,
+            color: Colors.white,
+            size: 40,),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Inicio",
+          CurvedNavigationBarItem(
+            child: Icon(Icons.home,
+            color: Colors.white,
+            size: 40,),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.build),
-            label: "Herramientas",
+          CurvedNavigationBarItem(
+            child: Icon(Icons.build,
+            color: Colors.white,
+            size: 40,),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.exit_to_app),
-            label: "Salir",
+          CurvedNavigationBarItem(
+            child: Icon(Icons.person, //Icons.exit_to_app
+            color: Colors.white,
+            size: 40,),
           ),
         ],
       ),

@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
 import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 import 'dart:math';
@@ -119,9 +119,9 @@ class _MyReportPageState extends State<MyReportPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Row(
-              children: [
-                SizedBox(width: 10),
+            const SizedBox(height: 10),
+            const Center(
+              child: 
                 Text(
                   'Reporte de problema',
                   style: TextStyle(
@@ -131,10 +131,10 @@ class _MyReportPageState extends State<MyReportPage> {
                     color: Colors.black,
                   ),
                 ),
-              ],
             ),
             const SizedBox(height: 20),
-            Text('Problema'),
+            Text('Problema',
+            style: TextStyle(fontSize: 17)),
             TextField(
               controller: problemController,
               decoration: InputDecoration(
@@ -145,7 +145,8 @@ class _MyReportPageState extends State<MyReportPage> {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Descripción del problema'),
+            Text('Descripción del problema',
+            style: TextStyle(fontSize: 17)),
             TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -158,7 +159,8 @@ class _MyReportPageState extends State<MyReportPage> {
               controller: descriptionController,
             ),
             const SizedBox(height: 20),
-            Text('Fecha Límite'),
+            Text('Fecha Límite',
+            style: TextStyle(fontSize: 17)),
             TextField(
               controller: _date,
               decoration: const InputDecoration(
@@ -179,7 +181,7 @@ class _MyReportPageState extends State<MyReportPage> {
                 }
               },
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 Uint8List? image = await pickImage(ImageSource.gallery);
@@ -191,6 +193,8 @@ class _MyReportPageState extends State<MyReportPage> {
                 }
               },
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -205,8 +209,9 @@ class _MyReportPageState extends State<MyReportPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 40),
-            Text('Método de contacto'),
+            const SizedBox(height: 20),
+            Text('Método de contacto',
+            style: TextStyle(fontSize: 17)),
             SizedBox(
               width: 320,
               child: DropdownButtonFormField<String>(
@@ -228,12 +233,20 @@ class _MyReportPageState extends State<MyReportPage> {
                 onChanged: (item) => setState(() => selectedItem = item),
               ),
             ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                saveReport();
-              },
-              child: Text('Enviar Reporte'),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(Colors.red),
+                  ),
+                onPressed: () {
+                  saveReport();
+                },
+                child: Text('Enviar Reporte', 
+                style: TextStyle(color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18),),
+              ),
             ),
           ],
         ),
