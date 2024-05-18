@@ -19,14 +19,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool selectedValue = false; // Valor inicial
 
   void signUserUp() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
     try {
       if (passwordController.text == confirmpasswordController.text) {
         bool isContractor = selectedValue; // Obtener el valor seleccionado
@@ -45,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Map<String, dynamic> userData = {
           'Email': emailController.text,
           'Name': nameController.text,
-          'Contractor': selectedValue,
+          'Contractor': isContractor,
           'UserId': userId,
         };
         try {
@@ -53,10 +45,6 @@ class _RegisterPageState extends State<RegisterPage> {
          } catch (e) {
           print("Error storing user data in Firestore: $e");
         }
-         Navigator.pop(context);
-         Navigator.pop(context);
-
-        // También puedes navegar a otra pantalla o realizar otras acciones aquí después de registrar al usuario
       } else {
         Navigator.pop(context);
         showDialog(
@@ -72,12 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
       print("Error al crear usuario: ${e.message}");
       Navigator.pop(context);
     }
-    finally {
-    // Asegúrate de que el diálogo de carga se cierra siempre
-    Navigator.pop(context);
-    Navigator.pop(context);
-    Navigator.pop(context);
-    }
+    
   }
 
   Widget buildEmail() {

@@ -1,14 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:typed_data';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class MyDiy extends StatefulWidget {
   const MyDiy({super.key});
@@ -28,10 +26,12 @@ class _MyDiyState extends State<MyDiy> {
   }
 
   void _loadUid() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      uid = prefs.getString('uid');
-    });
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        uid = user.uid;
+      });
+    }
   }
 
   void _deleteProject(String projectId) async {
