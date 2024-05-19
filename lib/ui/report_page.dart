@@ -5,15 +5,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_fix_it/ui/homePages/homePage.dart';
 import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
-import 'package:we_fix_it/ui/widgets/widgetlogin.dart';
 import 'dart:math';
+
 String generateRandomName() {
   Random random = Random();
-  int randomNumber = random.nextInt(1000000); // Genera un número aleatorio entre 0 y 999999
-  return 'image_$randomNumber'; // Prefijo 'image_' seguido de un número aleatorio
+  int randomNumber = random.nextInt(1000000);
+  return 'image_$randomNumber';
 }
+
 class MyReportPage extends StatefulWidget {
   const MyReportPage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -28,16 +29,15 @@ class _MyReportPageState extends State<MyReportPage> {
   final TextEditingController problemController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   TextEditingController _date = TextEditingController();
-  List<String> items = ['Orientacion', 'Presencialmente'];
-  String? selectedItem = 'Orientacion';
 
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<String?> getUserUid() async {
-  final User? user = FirebaseAuth.instance.currentUser;
-  return user?.uid;
-}
+    final User? user = FirebaseAuth.instance.currentUser;
+    return user?.uid;
+  }
+
   Future<void> saveReport() async {
     try {
       final String? uid = await getUserUid();
@@ -46,11 +46,9 @@ class _MyReportPageState extends State<MyReportPage> {
       }
       
       if (_image != null && problemController.text.isNotEmpty && descriptionController.text.isNotEmpty && _date.text.isNotEmpty) {
-        // Subir imagen a Firebase Storage
         final String imageName = generateRandomName();
         final String imageUrl = await uploadImageToStorage(imageName, _image!);
 
-        // Guardar datos en Firebase Firestore
         await _firestore.collection('userProblems').add({
           'uid': uid,
           'problem': problemController.text,
@@ -59,7 +57,6 @@ class _MyReportPageState extends State<MyReportPage> {
           'date': _date.text,
         });
 
-        // Limpiar campos después de enviar el reporte
         setState(() {
           _image = null;
           _imageSelected = false;
@@ -68,7 +65,6 @@ class _MyReportPageState extends State<MyReportPage> {
           _date.clear();
         });
 
-        // Mostrar mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Reporte enviado con éxito')),
         );
@@ -101,28 +97,17 @@ class _MyReportPageState extends State<MyReportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(
-        action: TextButton(
-          onPressed: null,
-          child: Text(
-            "Usuario",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
+      appBar: AppBar(
+        title: Text(widget.title),
       ),
-      body: Container(
-        padding: const EdgeInsets.only(left: 40, right: 40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const SizedBox(height: 10),
-            const Center(
-              child: 
-                Text(
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Center(
+                child: Text(
                   'Reporte de problema',
                   style: TextStyle(
                     fontFamily: 'Inter',
@@ -131,124 +116,107 @@ class _MyReportPageState extends State<MyReportPage> {
                     color: Colors.black,
                   ),
                 ),
-            ),
-            const SizedBox(height: 20),
-            Text('Problema',
-            style: TextStyle(fontSize: 17)),
-            TextField(
-              controller: problemController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                hintText: 'Ingrese el problema',
               ),
-            ),
-            const SizedBox(height: 20),
-            Text('Descripción del problema',
-            style: TextStyle(fontSize: 17)),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                hintText: 'Ingrese la descripción del problema',
-              ),
-              minLines: 1,
-              maxLines: 10,
-              controller: descriptionController,
-            ),
-            const SizedBox(height: 20),
-            Text('Fecha Límite',
-            style: TextStyle(fontSize: 17)),
-            TextField(
-              controller: _date,
-              decoration: const InputDecoration(
-                icon: Icon(Icons.calendar_today_rounded),
-                labelText: "Selecciona una fecha límite",
-              ),
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                );
-                if (pickedDate != null) {
-                  setState(() {
-                    _date.text = DateFormat('yyyy-MM-dd').format(pickedDate);
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                Uint8List? image = await pickImage(ImageSource.gallery);
-                if (image != null) {
-                  setState(() {
-                    _image = image;
-                    _imageSelected = true;
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Row(
-                children: [
-                  _imageSelected
-                      ? Icon(Icons.check, color: Colors.green)
-                      : const Icon(Icons.add_a_photo),
-                  const SizedBox(width: 10),
-                  _imageSelected ? Text('Imagen adjuntada') : Text('Seleccionar Imagen'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text('Método de contacto',
-            style: TextStyle(fontSize: 17)),
-            SizedBox(
-              width: 320,
-              child: DropdownButtonFormField<String>(
+              const SizedBox(height: 20),
+              Text('Problema', style: TextStyle(fontSize: 17)),
+              TextField(
+                controller: problemController,
                 decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: 'Ingrese el problema',
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text('Descripción del problema', style: TextStyle(fontSize: 17)),
+              TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: 'Ingrese la descripción del problema',
+                ),
+                minLines: 1,
+                maxLines: 10,
+                controller: descriptionController,
+              ),
+              const SizedBox(height: 20),
+              Text('Fecha Límite', style: TextStyle(fontSize: 17)),
+              TextField(
+                controller: _date,
+                decoration: const InputDecoration(
+                  icon: Icon(Icons.calendar_today_rounded),
+                  labelText: "Selecciona una fecha límite",
+                ),
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2101),
+                  );
+                  if (pickedDate != null) {
+                    setState(() {
+                      _date.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  Uint8List? image = await pickImage(ImageSource.gallery);
+                  if (image != null) {
+                    setState(() {
+                      _image = image;
+                      _imageSelected = true;
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(width: 2),
                   ),
                 ),
-                value: selectedItem,
-                items: items
-                    .map(
-                      (item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item, style: const TextStyle(fontSize: 18)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (item) => setState(() => selectedItem = item),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _imageSelected
+                        ? Icon(Icons.check, color: Colors.green)
+                        : const Icon(Icons.add_a_photo),
+                    const SizedBox(width: 10),
+                    _imageSelected ? Text('Imagen adjuntada') : Text('Seleccionar Imagen'),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
-            Center(
-              child: ElevatedButton(
-                style: ButtonStyle(
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton(
+                  style: ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll<Color>(Colors.red),
                   ),
-                onPressed: () {
-                  saveReport();
-                },
-                child: Text('Enviar Reporte', 
-                style: TextStyle(color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18),),
+                  onPressed: () {
+                    saveReport();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyInicio()),
+                    );
+                  },
+                  child: Text(
+                    'Enviar Reporte',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
