@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserPosts extends StatefulWidget {
   const UserPosts({Key? key}) : super(key: key);
@@ -51,29 +52,32 @@ class PostCard extends StatelessWidget {
   const PostCard({Key? key, required this.problem}) : super(key: key);
 
   void _sendHelpRequest(BuildContext context) {
-    final String? uid = problem['uid'];
-    final String? problemId = problem['docId'];
+  final String? uid = problem['uid'];
+  final String? problemId = problem['docId'];
+  final String? employeeUid = FirebaseAuth.instance.currentUser?.uid; 
 
-    if (uid != null && problemId != null) {
-      FirebaseFirestore.instance.collection('helpRequests').add({
-        'uid': uid,
-        'problemId': problemId,
-        'requestTime': FieldValue.serverTimestamp(),
-      }).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Solicitud de ayuda enviada')),
-        );
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
-        );
-      });
-    } else {
+  if (uid != null && problemId != null && employeeUid != null) {
+    FirebaseFirestore.instance.collection('helpRequests').add({
+      'userId': uid,
+      'employeeId': employeeUid, 
+      'problemId': problemId,
+      'requestTime': FieldValue.serverTimestamp(),
+    }).then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Solicitud de ayuda enviada')),
+      );
+    }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
       );
-    }
+    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
