@@ -5,8 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:we_fix_it/ui/homePages/homePage.dart';
-import 'package:we_fix_it/ui/widgets/widgetPickImage.dart';
+import 'package:we_fix_it/ui/homePages/home_page.dart';
+import 'package:we_fix_it/ui/widgets/widget_pick_image.dart';
 import 'dart:math';
 
 String generateRandomName() {

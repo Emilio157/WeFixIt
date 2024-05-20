@@ -3,11 +3,11 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:we_fix_it/ui/homePages/diyPage.dart';
-import 'package:we_fix_it/ui/homePages/chatByUser.dart';
-import 'package:we_fix_it/ui/homePages/toolsPage.dart';
-import 'package:we_fix_it/ui/homePages/profilePage.dart';
-import 'homePages/homePage.dart';
+import 'package:we_fix_it/ui/homePages/chats_user_list.dart';
+import 'package:we_fix_it/ui/homePages/diy_page.dart';
+import 'package:we_fix_it/ui/homePages/tools_page.dart';
+import 'package:we_fix_it/ui/homePages/profile_page.dart';
+import 'homePages/home_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentIndex = 2;
   final pantallas = [
-    ChatsUser(),
+    ChatListScreen(),
     MyDiy(),
     MyInicio(),
     MyTools(),

@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/contractorHomePages/chats_by_contractor.dart';
 import 'package:we_fix_it/ui/contractorHomePages/user_posts.dart';
-import 'package:we_fix_it/ui/homePages/profilePage.dart';
+import 'package:we_fix_it/ui/homePages/profile_page.dart';
 
 class HomePageContractor extends StatefulWidget {
   const HomePageContractor({super.key});
@@ -17,7 +17,7 @@ class HomePageContractor extends StatefulWidget {
 class _HomePageContractorState extends State<HomePageContractor> {
   int currentIndex = 1;  
   final pantallas = [
-    ChatsContractor(),
+    EmployeeChatListScreen(),
     UserPosts(),
     MyLogOut(),
   ];
