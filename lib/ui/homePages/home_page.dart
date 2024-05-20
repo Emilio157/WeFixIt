@@ -182,23 +182,66 @@ class DetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              problem['imageLink'] != null
-                  ? Image.network(problem['imageLink'])
-                  : Container(),
-              SizedBox(height: 16),
+              Center(
+                child: problem['imageLink'] != null
+                    ? Image.network(problem['imageLink'],
+                    height: 300,
+                    width: 300,)
+                    : Container(),
+              ),
+              const SizedBox(height: 8),
+              const PreferredSize(
+                preferredSize: Size.fromHeight(1),
+                child: Divider(
+                  color: Color.fromARGB(255, 255, 103, 92),
+                  thickness: 5,),
+              ),
+              const SizedBox(height: 8),
+              const Center(
+                child: Text(
+                  "Problema: ",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 8),
               Text(
                 problem['problem'],
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
+              const PreferredSize(
+                preferredSize: Size.fromHeight(1),
+                child: Divider(
+                  color: Color.fromARGB(255, 255, 103, 92),
+                  thickness: 5,),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Fecha límite del problema : ",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
               Text(
-                "Fecha límite: " + problem['date'],
+                problem['date'],
                 style: TextStyle(fontSize: 18),
               ),
-              SizedBox(height: 8),
-              Text(
-                problem['description'] ?? 'No description available.',
-                style: TextStyle(fontSize: 16),
+              const SizedBox(height: 8),
+              const Text(
+                'Descripción del problema: ',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: 350,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Color.fromARGB(255, 219, 219, 219),
+              ),
+                child: Text(
+                  problem['description'] ?? 'No description available.',
+                  style: const TextStyle(fontSize: 16),
+                ),
               ),
             ],
           ),
