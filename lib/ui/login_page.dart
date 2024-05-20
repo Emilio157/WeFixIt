@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 class LoginScreen extends StatefulWidget {
   final Function()? onTap;
   const LoginScreen({super.key,required this.onTap});
@@ -14,17 +13,12 @@ class _LoginScreenState extends State<LoginScreen>{
     final passwordController = TextEditingController();
 
   void signUserIn(BuildContext context) async {
-  showDialog(
-    context: context,
-    builder: (context) => const Center(child: CircularProgressIndicator()),
-  );
   try {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: emailController.text,
       password: passwordController.text,
     );
-    Navigator.pop(context); 
-  } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
     Navigator.pop(context); 
     showDialog(
       context: context,
@@ -74,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen>{
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.email,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "usuario@ejemplo.com",
               hintStyle: TextStyle(
@@ -125,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen>{
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Color(0xFFAC18E),
+                color: Color.fromARGB(255, 160, 160, 160),
               ),
               hintText: "Contraseña",
               hintStyle: TextStyle(

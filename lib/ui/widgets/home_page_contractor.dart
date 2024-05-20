@@ -3,50 +3,24 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:we_fix_it/ui/homePages/chats_user_list.dart';
-import 'package:we_fix_it/ui/homePages/diy_page.dart';
-import 'package:we_fix_it/ui/homePages/tools_page.dart';
+import 'package:we_fix_it/ui/contractorHomePages/chats_by_contractor.dart';
+import 'package:we_fix_it/ui/contractorHomePages/user_posts.dart';
 import 'package:we_fix_it/ui/homePages/profile_page.dart';
-import 'homePages/home_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePageContractor extends StatefulWidget {
+  const HomePageContractor({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePageContractor> createState() => _HomePageContractorState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int currentIndex = 2;
+class _HomePageContractorState extends State<HomePageContractor> {
+  int currentIndex = 1;  
   final pantallas = [
-    ChatListScreen(),
-    MyDiy(),
-    MyInicio(),
-    MyTools(),
+    EmployeeChatListScreen(),
+    UserPosts(),
     MyLogOut(),
   ];
-
-  /* List<Map<String, dynamic>> problems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _getProblems();
-  }
-
-  Future<void> _getProblems() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final String uid = user.uid;
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('userProblems')
-          .where('uid', isEqualTo: uid)
-          .get();
-      setState(() {
-        problems = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-      });
-    }
-  } */
 
   Future<String> _getUserName(String uid) async {
     try {
@@ -124,29 +98,25 @@ class _HomePageState extends State<HomePage> {
         height: MediaQuery.of(context).size.height * 0.11,
         items: const [
           CurvedNavigationBarItem(
-            child: Icon(Icons.chat,
-            color: Colors.white,
-            size: 40,),
+            child: Icon(
+              Icons.chat,
+              color: Colors.white,
+              size: 40,
+            ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(Icons.palette,
-            color: Colors.white,
-            size: 40,),
+            child: Icon(
+              Icons.home,
+              color: Colors.white,
+              size: 40,
+            ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(Icons.home,
-            color: Colors.white,
-            size: 40,),
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.build,
-            color: Colors.white,
-            size: 40,),
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.person,
-            color: Colors.white,
-            size: 40,),
+            child: Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 40,
+            ),
           ),
         ],
       ),
