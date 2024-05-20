@@ -49,143 +49,149 @@ class _MyDiyState extends State<MyDiy> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("DIY Projects",
-        style: TextStyle(fontWeight: FontWeight.bold,),),
-      ),
-      body: uid == null
-          ? const Center(child: CircularProgressIndicator())
-          : StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection('diyProjects').where('uid', isEqualTo: uid).snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No projects found.'));
-                }
-
-                final projects = snapshot.data!.docs;
-
-                return /* ListView.builder(
+    return Stack(
+      children: [Scaffold(
+        appBar: AppBar(
+          title: const Text("DIY Projects",
+          style: TextStyle(fontWeight: FontWeight.bold,),),
+        ),
+        body: uid == null
+            ? const Center(child: CircularProgressIndicator())
+            : StreamBuilder<QuerySnapshot>(
+                stream: _firestore.collection('diyProjects').where('uid', isEqualTo: uid).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+      
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('No projects found.'));
+                  }
+      
+                  final projects = snapshot.data!.docs;
+      
+                  return /* ListView.builder(
+                    itemCount: projects.length,
+                    itemBuilder: (context, index) {
+                      final project = projects[index];
+                      return ListTile(
+                        leading: Image.network(project['imageLink']),
+                        title: Text(project['name']),
+                        subtitle: Text(project['date']),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteProject(project.id),
+                        ),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProjectDetailScreen(project: project),
+                          ),
+                        ),
+                      );
+                    },
+                  ); */
+                  ListView.builder(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
                   itemCount: projects.length,
                   itemBuilder: (context, index) {
                     final project = projects[index];
-                    return ListTile(
-                      leading: Image.network(project['imageLink']),
-                      title: Text(project['name']),
-                      subtitle: Text(project['date']),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _deleteProject(project.id),
-                      ),
+                    return GestureDetector(
                       onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProjectDetailScreen(project: project),
-                        ),
-                      ),
-                    );
-                  },
-                ); */
-                ListView.builder(
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemCount: projects.length,
-                itemBuilder: (context, index) {
-                  final project = projects[index];
-                  return GestureDetector(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProjectDetailScreen(project: project),
-                        ),
-                      ),
-                    child: Container(
-                            width: double.infinity,
-                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            padding: EdgeInsets.all(12),
-                            
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 3,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    project['imageLink'],
-                                    height: 100,
-                                    width: 100,
-                                  ),
-                                ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        project['name'],
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        project['date'],
-                                        style: TextStyle(fontSize: 14),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      size: 24,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () {
-                                      _deleteProject(project.id);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Proyecto ' + project['name'] + ' fue elminiado'),
-                                          duration: const Duration(seconds: 2),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                              ],
-                            ),
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProjectDetailScreen(project: project),
                           ),
-                  );
-              },
-            );
-              },
-            ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AddProjectScreen(uid: uid)),
-        ),
-        child: const Icon(Icons.add,
-        color: Colors.white,),
+                        ),
+                      child: Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              padding: EdgeInsets.all(12),
+                              
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    spreadRadius: 2,
+                                    blurRadius: 3,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      project['imageLink'],
+                                      height: 100,
+                                      width: 100,
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          project['name'],
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          project['date'],
+                                          style: TextStyle(fontSize: 14),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        size: 24,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        _deleteProject(project.id);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Proyecto ' + project['name'] + ' fue elminiado'),
+                                            duration: const Duration(seconds: 2),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ),
+                    );
+                },
+              );
+                },
+              ),
       ),
+      Align(
+        alignment: Alignment(0.9, 0.67),
+        child: FloatingActionButton(
+            backgroundColor: Colors.red,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddProjectScreen(uid: uid)),
+            ),
+            child: const Icon(Icons.add,
+            color: Colors.white,),
+          ),
+      ),
+      ]
     );
   }
 }

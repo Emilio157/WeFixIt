@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:we_fix_it/ui/report_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,6 +40,7 @@ class _MyInicioState extends State<MyInicio> {
           children: <Widget>[
             Column(
               children: [
+                SizedBox(height: 8),
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(
@@ -57,7 +59,7 @@ class _MyInicioState extends State<MyInicio> {
                         MaterialPageRoute(builder: (context) => MyReportPage(title: "Reportar Problema")),
                       ),
                       child: Text(
-                        '¡Reportanos un problema!',
+                        '¡Crea un reporte de problema!',
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
@@ -74,7 +76,7 @@ class _MyInicioState extends State<MyInicio> {
                 ),
                 icon: Icon(Icons.email),
                 iconSize: 35,
-                color: Colors.black,
+                color: Colors.red,
               ),
             ),
             Padding(
@@ -104,39 +106,45 @@ class _MyInicioState extends State<MyInicio> {
                             ),
                           ],
                         ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Column(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                problem['imageLink'],
-                                height: 100,
-                                width: 100,
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    problem['problem'],
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    problem['imageLink'],
+                                    height: 300,
+                                    width: 300,
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    problem['date'],
-                                    style: TextStyle(fontSize: 14),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                ),
+                            SizedBox(height: 10),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Text(
+                                          problem['problem'],
+                                          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text("Fecha límite: " +
+                                        problem['date'],
+                                        style: TextStyle(fontSize: 18),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(width: 8),
+                              ],
                             ),
-                            SizedBox(width: 8),
                           ],
                         ),
                       ),
@@ -168,30 +176,32 @@ class DetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(problem['problem']),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            problem['imageLink'] != null
-                ? Image.network(problem['imageLink'])
-                : Container(),
-            SizedBox(height: 16),
-            Text(
-              problem['problem'],
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "Fecha límite: " + problem['date'],
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 8),
-            Text(
-              problem['description'] ?? 'No description available.',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              problem['imageLink'] != null
+                  ? Image.network(problem['imageLink'])
+                  : Container(),
+              SizedBox(height: 16),
+              Text(
+                problem['problem'],
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "Fecha límite: " + problem['date'],
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 8),
+              Text(
+                problem['description'] ?? 'No description available.',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
         ),
       ),
     );

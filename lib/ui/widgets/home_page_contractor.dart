@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/contractorHomePages/chats_by_contractor.dart';
 import 'package:we_fix_it/ui/contractorHomePages/user_posts.dart';
+import 'package:we_fix_it/ui/homePages/profilePage.dart';
 
 class HomePageContractor extends StatefulWidget {
   const HomePageContractor({super.key});
@@ -18,6 +19,7 @@ class _HomePageContractorState extends State<HomePageContractor> {
   final pantallas = [
     ChatsContractor(),
     UserPosts(),
+    MyLogOut(),
   ];
 
   Future<String> _getUserName(String uid) async {
@@ -40,6 +42,7 @@ class _HomePageContractorState extends State<HomePageContractor> {
     final String uid = user != null ? user.uid : '';
 
     return Scaffold(
+      extendBody: true,
       backgroundColor: const Color(0xffF4F0E8),
       appBar: AppBar(
         title: uid.isEmpty
@@ -90,7 +93,7 @@ class _HomePageContractorState extends State<HomePageContractor> {
         index: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
         color: Colors.red,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         buttonBackgroundColor: Colors.red,
         height: MediaQuery.of(context).size.height * 0.11,
         items: const [
@@ -104,6 +107,13 @@ class _HomePageContractorState extends State<HomePageContractor> {
           CurvedNavigationBarItem(
             child: Icon(
               Icons.home,
+              color: Colors.white,
+              size: 40,
+            ),
+          ),
+          CurvedNavigationBarItem(
+            child: Icon(
+              Icons.person,
               color: Colors.white,
               size: 40,
             ),

@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage> {
     final String uid = user != null ? user.uid : '';
 
     return Scaffold(
+      extendBody: true,
       backgroundColor: const Color(0xffF4F0E8),
       appBar: AppBar(
         title: uid.isEmpty
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage> {
         index: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
         color: Colors.red,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         buttonBackgroundColor: Colors.red,
         height: MediaQuery.of(context).size.height * 0.11,
         items: const [

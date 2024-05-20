@@ -33,7 +33,7 @@ class _UserPostsState extends State<UserPosts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Problemas Reportados'),
+        title: Center(child: Text('Problemas Reportados', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),)),
       ),
       body: ListView.builder(
         itemCount: problems.length,
@@ -77,39 +77,89 @@ class PostCard extends StatelessWidget {
     );
   }
 }
-
+  
+    void _navigateToDetailWorkPage(BuildContext context, Map<String, dynamic> problem) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DetailPage(problem: problem)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(10),
-        title: Text(
-          problem['problem'],
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          "Fecha límite: " + problem['date'],
-          style: TextStyle(fontSize: 14),
-        ),
-        leading: problem['imageLink'] != null
-            ? Image.network(problem['imageLink'], width: 70, height: 70, fit: BoxFit.cover)
-            : null,
-        trailing: IconButton(
-          icon: Icon(Icons.help_outline),
-          onPressed: () => _sendHelpRequest(context),
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailPage(problem: problem),
+    return GestureDetector(
+      onTap: () => _navigateToDetailWorkPage(context, problem),
+      child: Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: Offset(0, 2),
             ),
-          );
-        },
+          ],
+      ),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              problem['imageLink'],
+                height: 300,
+                width: 300,
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                              problem['problem'],
+                              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              iconSize: 26,
+                              icon: Icon(Icons.help_outline),
+                              onPressed: () => _sendHelpRequest(context),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                        Text("Fecha límite: " +
+                          problem['date'],
+                          style: TextStyle(fontSize: 18),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                SizedBox(width: 8),
+              ],
+            ),
+          ],
+        ),
       ),
     );
+
   }
 }
 
@@ -153,3 +203,39 @@ class DetailPage extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+//Lista antigua de visualizacion
+/* Card(
+      margin: EdgeInsets.all(10),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(10),
+        title: Text(
+          problem['problem'],
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          "Fecha límite: " + problem['date'],
+          style: TextStyle(fontSize: 14),
+        ),
+        leading: problem['imageLink'] != null
+            ? Image.network(problem['imageLink'], width: 70, height: 70, fit: BoxFit.cover)
+            : null,
+        trailing: IconButton(
+          icon: Icon(Icons.help_outline),
+          onPressed: () => _sendHelpRequest(context),
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailPage(problem: problem),
+            ),
+          );
+        },
+      ),
+    ); */
