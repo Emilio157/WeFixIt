@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:bubble/bubble.dart';
 
 class ChatUserScreen extends StatefulWidget {
   final String receiverId;
@@ -21,6 +22,20 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
     ids.sort(); 
     return '${ids[0]}_${ids[1]}_$problemId';
   }
+  
+  /* Future<String> _getUserName(String receiverid) async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Usuarios').doc(receiverid).get();
+      if (userDoc.exists) {
+        return userDoc['Name'];
+      } else {
+        return 'No Name Found';
+      }
+    } catch (e) {
+      print('Error fetching user name: $e');
+      return 'Error';
+    }
+  } */
 
   void _sendMessage() async {
     if (_messageController.text.isNotEmpty && user != null) {
@@ -55,10 +70,18 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        toolbarHeight: 75,
+        title: Text('Chat', style: TextStyle(fontSize: 28),),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(
+            color: Colors.red,
+            thickness: 15,),
+        ),
       ),
       body: Column(
         children: <Widget>[
+          SizedBox(height: 8,),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -83,15 +106,13 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                     return ListTile(
                       title: Align(
                         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: isMe ? Colors.blue : Colors.grey,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                        child: Bubble(
+                          color: isMe ? Color.fromARGB(255, 253, 95, 84) : Color.fromARGB(255, 160, 160, 160), 
+                          nip: isMe ? BubbleNip.rightTop : BubbleNip.leftTop,
+                          radius: Radius.circular(8),
                           child: Text(
                             message['message'],
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ),
                       ),
@@ -106,16 +127,25 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Escribe tu mensaje...',
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(fontSize: 22),
+                        hintText: 'Escribe tu mensaje...',
+                      ),
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _sendMessage,
+                Ink(
+                  height: 50,
+                  width: 50,
+                  decoration: const ShapeDecoration(shape: CircleBorder(), color: Colors.red),
+                  child: IconButton(
+                    icon: Icon(Icons.send, size: 25, color: Colors.white, ),
+                    onPressed: _sendMessage,
+                  ),
                 ),
               ],
             ),
@@ -125,3 +155,16 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
     );
   }
 }
+
+/* 
+Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isMe ? Colors.red : Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            message['message'],
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ), */

@@ -204,100 +204,88 @@ class DetailPage extends StatelessWidget {
         title: Text(problem['problem']),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const PreferredSize(
-                preferredSize: Size.fromHeight(1),
-                child: Divider(
-                  color: Color.fromARGB(255, 255, 103, 92),
-                  thickness: 5,),
-              ),
-              Row(
-                children: [
+        child: Stack(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Center(
+                    child: problem['imageLink'] != null
+                        ? Image.network(problem['imageLink'],
+                        height: 300,
+                        width: 300,)
+                        : Container(),
+                  ),
+                  const SizedBox(height: 8),
+                  const PreferredSize(
+                    preferredSize: Size.fromHeight(1),
+                    child: Divider(
+                      color: Color.fromARGB(255, 255, 103, 92),
+                      thickness: 5,),
+                  ),
+                  const SizedBox(height: 8),
+                  const Center(
+                    child: Text(
+                      "Problema: ",
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    problem['problem'],
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const PreferredSize(
+                    preferredSize: Size.fromHeight(1),
+                    child: Divider(
+                      color: Color.fromARGB(255, 255, 103, 92),
+                      thickness: 5,),
+                  ),
+                  const SizedBox(height: 8),
                   const Text(
-                    "Contactar para proporcionar ayuda: ",
+                    "Fecha límite del problema : ",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  IconButton(
-                    iconSize: 26,
-                    icon: Icon(Icons.help_outline),
-                    onPressed: () => _sendHelpRequest(context),
+                  const SizedBox(height: 8),
+                  Text(
+                    problem['date'],
+                    style: TextStyle(fontSize: 18),
                   ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Descripción del problema: ',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 350,
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color.fromARGB(255, 219, 219, 219),
+                  ),
+                    child: Text(
+                      problem['description'] ?? 'No description available.',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 100),
                 ],
               ),
-              const PreferredSize(
-                preferredSize: Size.fromHeight(1),
-                child: Divider(
-                  color: Color.fromARGB(255, 255, 103, 92),
-                  thickness: 5,),
-              ),
-              Center(
-                child: problem['imageLink'] != null
-                    ? Image.network(problem['imageLink'],
-                    height: 300,
-                    width: 300,)
-                    : Container(),
-              ),
-              const SizedBox(height: 8),
-              const PreferredSize(
-                preferredSize: Size.fromHeight(1),
-                child: Divider(
-                  color: Color.fromARGB(255, 255, 103, 92),
-                  thickness: 5,),
-              ),
-              const SizedBox(height: 8),
-              const Center(
-                child: Text(
-                  "Problema: ",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                problem['problem'],
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const PreferredSize(
-                preferredSize: Size.fromHeight(1),
-                child: Divider(
-                  color: Color.fromARGB(255, 255, 103, 92),
-                  thickness: 5,),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Fecha límite del problema : ",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                problem['date'],
-                style: TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Descripción del problema: ',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 350,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Color.fromARGB(255, 219, 219, 219),
-              ),
-                child: Text(
-                  problem['description'] ?? 'No description available.',
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.red,
+        onPressed: () => _sendHelpRequest(context),
+        label:const Text("Proporcionar ayuda",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        icon:const Icon(Icons.help_outline,
+        color: Colors.white,),
       ),
     );
   }
