@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:we_fix_it/ui/homePages/home_page.dart';
+import 'package:we_fix_it/ui/home_page_user.dart';
 import 'package:we_fix_it/ui/widgets/widget_pick_image.dart';
 import 'dart:math';
 
@@ -202,7 +202,7 @@ class _MyReportPageState extends State<MyReportPage> {
                     saveReport();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MyInicio()),
+                      MaterialPageRoute(builder: (context) => HomePage()),
                     );
                   },
                   child: Text(
