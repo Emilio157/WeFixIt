@@ -19,7 +19,6 @@ class _LoginScreenState extends State<LoginScreen>{
       password: passwordController.text,
     );
     } on FirebaseAuthException catch (e) {
-    Navigator.pop(context); 
     showDialog(
       context: context,
       builder: (context) => const AlertDialog(
@@ -34,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen>{
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
+        const Text(
           "Correo electrónico",
           style: TextStyle(
             color: Colors.white,
@@ -48,8 +47,8 @@ class _LoginScreenState extends State<LoginScreen>{
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
+            boxShadow: const[
+               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 6,
                 offset: Offset(0,2)
@@ -60,10 +59,10 @@ class _LoginScreenState extends State<LoginScreen>{
           child: TextField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black87
             ),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
@@ -85,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen>{
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
+        const Text(
           "Contraseña",
           style: TextStyle(
             color: Colors.white,
@@ -93,13 +92,13 @@ class _LoginScreenState extends State<LoginScreen>{
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
+            boxShadow: const[
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 6,
@@ -111,10 +110,10 @@ class _LoginScreenState extends State<LoginScreen>{
           child: TextField(
             controller: passwordController,
             obscureText: true,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black87
             ),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14),
               prefixIcon: Icon(
@@ -132,31 +131,15 @@ class _LoginScreenState extends State<LoginScreen>{
     );
   }
 
-  Widget buildForgotPassBtn() {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () => print("Forgot Password pressed"),
-        child: Text(
-          "Olvide mi contraseña",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildLoginBtn(){
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 25),
+      padding: const EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           elevation: 5,
-          padding: EdgeInsets.all(15),
+          padding: const EdgeInsets.all(15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -164,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen>{
         onPressed: () {
           signUserIn(context); 
         },
-        child: Text(
+        child: const Text(
           "Iniciar Sesión",
           style: TextStyle(
             color: Color(0xFFFF0000),
@@ -180,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen>{
     return GestureDetector(
       onTap: widget.onTap ,
       child: RichText(
-        text: TextSpan(
+        text: const TextSpan(
           children: [
             TextSpan(
               text: "¿No tienes cuenta? ",
@@ -215,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen>{
               Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -228,15 +211,15 @@ class _LoginScreenState extends State<LoginScreen>{
                   )
                 ),
                 child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 25,
                     vertical: 120
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
+                      const Text(
                         "WeFixIt", 
                         style: TextStyle(
                           color: Colors.white,
@@ -244,11 +227,10 @@ class _LoginScreenState extends State<LoginScreen>{
                           fontWeight: FontWeight.bold,
                         )
                       ),
-                      SizedBox(height: 50),
+                      const SizedBox(height: 50),
                       buildEmail(),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       buildPassword(),
-                      buildForgotPassBtn(),
                       buildLoginBtn(),
                       buildSignUpBtn(),
                     ]

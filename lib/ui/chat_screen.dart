@@ -22,20 +22,11 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
     ids.sort(); 
     return '${ids[0]}_${ids[1]}_$problemId';
   }
-  
-  /* Future<String> _getUserName(String receiverid) async {
-    try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Usuarios').doc(receiverid).get();
-      if (userDoc.exists) {
-        return userDoc['Name'];
-      } else {
-        return 'No Name Found';
-      }
-    } catch (e) {
-      print('Error fetching user name: $e');
-      return 'Error';
-    }
-  } */
+
+  Future<Map<String, dynamic>> _getUserInfo(String userId) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Usuarios').doc(userId).get();
+    return userDoc.data() as Map<String, dynamic>;
+  }
 
   void _sendMessage() async {
     if (_messageController.text.isNotEmpty && user != null) {
@@ -64,6 +55,74 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
     }
   }
 
+ void _endChat() async {
+  if (user == null) return;
+
+  String chatId = _generateChatId(user!.uid, widget.receiverId, widget.problemId);
+
+  try {
+    var messagesSnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .get();
+
+    for (var doc in messagesSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    await FirebaseFirestore.instance.collection('chats').doc(chatId).delete();
+
+    QuerySnapshot helpRequestSnapshot = await FirebaseFirestore.instance
+        .collection('helpRequests')
+        .where('problemId', isEqualTo: widget.problemId)
+        .get();
+
+    for (var doc in helpRequestSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Chat finalizado')),
+    );
+
+    Navigator.of(context).pop();
+  } catch (e) {
+    print("Error ending chat: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al finalizar el chat: $e')),
+    );
+  }
+}
+
+  void _showFinalizeDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("¿Se solucionó el problema? (Al decir si, este chat sera borrado)"),
+          backgroundColor: Colors.white,
+          surfaceTintColor: const Color.fromARGB(255, 235, 115, 106),
+          actions: [
+            TextButton(
+              child: const Text("Sí", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+                _endChat(); 
+              },
+            ),
+            TextButton(
+              child: const Text("No", style: TextStyle(color: Colors.black, fontSize: 20),),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String chatId = _generateChatId(user!.uid, widget.receiverId, widget.problemId);
@@ -71,7 +130,31 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 75,
-        title: Text('Chat', style: TextStyle(fontSize: 28),),
+                actions: [
+          FutureBuilder<Map<String, dynamic>>(
+            future: _getUserInfo(user!.uid),
+            builder: (context, userInfoSnapshot) {
+              if (!userInfoSnapshot.hasData) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              bool isContractor = userInfoSnapshot.data!['Contractor'];
+
+              if (!isContractor) {
+                return IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: _showFinalizeDialog,
+                );
+              } else {
+                return SizedBox();
+              }
+            },
+          )
+        ],
+        title: const Text('Chat', style: TextStyle(fontSize: 28),),
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1),
           child: Divider(
@@ -81,7 +164,7 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
       ),
       body: Column(
         children: <Widget>[
-          SizedBox(height: 8,),
+          const SizedBox(height: 8,),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -103,19 +186,35 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                     var message = messages[index];
                     bool isMe = message['senderId'] == user!.uid;
 
-                    return ListTile(
-                      title: Align(
-                        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                        child: Bubble(
-                          color: isMe ? Color.fromARGB(255, 253, 95, 84) : Color.fromARGB(255, 160, 160, 160), 
-                          nip: isMe ? BubbleNip.rightTop : BubbleNip.leftTop,
-                          radius: Radius.circular(8),
-                          child: Text(
-                            message['message'],
-                            style: const TextStyle(color: Colors.white, fontSize: 20),
+                    return FutureBuilder<Map<String, dynamic>>(
+                      future: _getUserInfo(message['senderId']),
+                      builder: (context, userInfoSnapshot) {
+                        if (!userInfoSnapshot.hasData) {
+                          return SizedBox();
+                        }
+                        String userName = userInfoSnapshot.data!['Name'];
+
+                        return ListTile(
+                          title: Align(
+                            alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                            child: Column(
+                              crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                              children: [
+                                Text(userName, style: const TextStyle(color: Color.fromARGB(255, 95, 95, 95))),
+                                Bubble(
+                                  color: isMe ? Color.fromARGB(255, 253, 95, 84) : Color.fromARGB(255, 160, 160, 160), 
+                                  nip: isMe ? BubbleNip.rightTop : BubbleNip.leftTop,
+                                  radius: Radius.circular(8),
+                                  child: Text(
+                                    message['message'],
+                                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     );
                   },
                 );
@@ -155,16 +254,3 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
     );
   }
 }
-
-/* 
-Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: isMe ? Colors.red : Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            message['message'],
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ), */

@@ -13,7 +13,7 @@ class ChatListScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('Chats'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('No user is currently logged in.'),
         ),
       );
@@ -21,7 +21,7 @@ class ChatListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chats'),
+        title: const Center(child: Text('Mensajes', style: TextStyle(fontSize: 32),)),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -30,7 +30,7 @@ class ChatListScreen extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           var helpRequests = snapshot.data!.docs;
@@ -46,7 +46,7 @@ class ChatListScreen extends StatelessWidget {
                 future: FirebaseFirestore.instance.collection('Usuarios').doc(employeeId).get(),
                 builder: (context, employeeSnapshot) {
                   if (!employeeSnapshot.hasData) {
-                    return ListTile(
+                    return const ListTile(
                       title: Text('Cargando...'),
                       subtitle: Text('Cargando...'),
                     );
@@ -58,28 +58,35 @@ class ChatListScreen extends StatelessWidget {
                     future: FirebaseFirestore.instance.collection('userProblems').doc(problemId).get(),
                     builder: (context, problemSnapshot) {
                       if (!problemSnapshot.hasData) {
-                        return ListTile(
-                          title: Text(employeeName),
-                          subtitle: Text('Cargando problema...'),
+                        return Card(
+                          child: ListTile(
+                            title: Text(employeeName),
+                            subtitle: const Text('Cargando problema...'),
+                          ),
                         );
                       }
                       var problemData = problemSnapshot.data!.data() as Map<String, dynamic>?;
                       var problemName = problemData != null ? problemData['problem'] : 'Desconocido';
 
-                      return ListTile(
-                        title: Text(employeeName),
-                        subtitle: Text('Problema: $problemName'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatUserScreen(
-                                receiverId: employeeId,
-                                problemId: problemId,
+                      return Card(
+                        shadowColor: Colors.black,
+                        color: const Color.fromARGB(255, 253, 95, 84),
+                        child: ListTile(
+                          leading: const Icon(Icons.person, size: 40, color: Colors.white,),
+                          title: Text(employeeName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,color: Colors.white,)),
+                          subtitle: Text('Problema: $problemName', style: const TextStyle(fontSize: 14, color: Colors.white,)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatUserScreen(
+                                  receiverId: employeeId,
+                                  problemId: problemId,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       );
                     },
                   );

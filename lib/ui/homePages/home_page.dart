@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:we_fix_it/ui/report_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyInicio extends StatefulWidget {
-  const MyInicio({super.key});
+  const MyInicio({Key? key});
 
   @override
   State<MyInicio> createState() => _MyInicioState();
@@ -29,10 +28,29 @@ class _MyInicioState extends State<MyInicio> {
           .where('uid', isEqualTo: uid)
           .get();
       setState(() {
-        problems = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+         problems = snapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          data['docId'] = doc.id;
+          return data;
+        }).toList();
       });
     }
   }
+
+  Future<void> _deleteProblem(String docId, String uid) async {
+  final User? user = FirebaseAuth.instance.currentUser;
+  if (user != null && user.uid == uid) {
+    try {
+      await FirebaseFirestore.instance.collection('userProblems').doc(docId).delete();
+      await _getProblems();
+    } catch (e) {
+      print("Error deleting problem: $e");
+    }
+  } else {
+    print("No se tiene acceso para eliminar este problema");
+  }
+}
+
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -109,13 +127,13 @@ class _MyInicioState extends State<MyInicio> {
                         child: Column(
                           children: [
                             ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    problem['imageLink'],
-                                    height: 300,
-                                    width: 300,
-                                  ),
-                                ),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                problem['imageLink'],
+                                height: 300,
+                                width: 300,
+                              ),
+                            ),
                             SizedBox(height: 10),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,8 +151,8 @@ class _MyInicioState extends State<MyInicio> {
                                         ),
                                       ),
                                       SizedBox(height: 4),
-                                      Text("Fecha límite: " +
-                                        problem['date'],
+                                      Text(
+                                        "Fecha límite: " + problem['date'],
                                         style: TextStyle(fontSize: 18),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -142,7 +160,35 @@ class _MyInicioState extends State<MyInicio> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                IconButton(
+                                  onPressed: () => showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("¿Esta Segur@ que quiere borrar el reporte?"),
+                                        backgroundColor: Colors.white,
+                                        surfaceTintColor: const Color.fromARGB(255, 235, 115, 106),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text("Sí", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(); 
+                                              _deleteProblem(problem['docId'], problem['uid']); 
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text("No", style: TextStyle(color: Colors.black, fontSize: 20),),
+                                            onPressed: () {
+                                            Navigator.of(context).pop(); 
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                                  icon: Icon(Icons.delete),
+                                  color: Colors.red,
+                                ),
                               ],
                             ),
                           ],
