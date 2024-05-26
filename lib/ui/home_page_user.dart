@@ -4,6 +4,7 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/homePages/chats_user_list.dart';
+import 'package:we_fix_it/ui/homePages/dev_page.dart';
 import 'package:we_fix_it/ui/homePages/diy_page.dart';
 import 'package:we_fix_it/ui/homePages/tools_page.dart';
 import 'package:we_fix_it/ui/homePages/profile_page.dart';
@@ -20,13 +21,13 @@ class _HomePageState extends State<HomePage> {
   int currentIndex = 2;
   final pantallas = [
     ChatListScreen(),
-    MyDiy(),
+    AddHardwareStoreScreen(),
     MyInicio(),
     MyTools(),
     MyLogOut(),
   ];
 
-  /* List<Map<String, dynamic>> problems = [];
+   List<Map<String, dynamic>> problems = [];
 
   @override
   void initState() {
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> {
         problems = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
       });
     }
-  } */
+  } 
 
   Future<String> _getUserName(String uid) async {
     try {

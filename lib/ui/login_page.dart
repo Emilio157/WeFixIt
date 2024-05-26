@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen>{
       password: passwordController.text,
     );
     } on FirebaseAuthException catch (e) {
-    Navigator.pop(context); 
+    
     showDialog(
       context: context,
       builder: (context) => const AlertDialog(
