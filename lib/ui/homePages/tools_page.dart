@@ -3,18 +3,19 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const MAPBOX_ACCESS_TOKEN =
     'pk.eyJ1Ijoiam9yZ2UxMjNkYW4iLCJhIjoiY2x3ZW12MGlqMW1laTJqbmlnazdmYm1rZSJ9.AaTUOIwiNbfCexj2AKngSQ';
 
 class MyTools extends StatefulWidget {
-  const MyTools({super.key});
+  const MyTools({Key? key}) : super(key: key);
 
   @override
-  State<MyTools> createState() => _MapScreenState();
+  State<MyTools> createState() => _MyToolsState();
 }
 
-class _MapScreenState extends State<MyTools> {
+class _MyToolsState extends State<MyTools> {
   LatLng? myPosition;
   List<Marker> hardwareStoreMarkers = [];
   bool searching = false;
@@ -59,16 +60,56 @@ class _MapScreenState extends State<MyTools> {
       querySnapshot.docs.forEach((result) {
         double lat = result['latitud'];
         double lon = result['longitud'];
+        String name = result['Nombre'];
+        String address = result['Direccion'];
+        String link = result['link'];
         LatLng location = LatLng(lat, lon);
         setState(() {
           hardwareStoreMarkers.add(
             Marker(
               point: location,
-              builder: (context) => Container(
-                child: const Icon(
-                  Icons.store,
-                  color: Colors.red,
-                  size: 40,
+              builder: (context) => GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Ferretería'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Nombre: $name'),
+                            SizedBox(height: 10),
+                            Text('Dirección: $address'),
+                            SizedBox(height: 10),
+                            Text('Enlace: $link'),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Cerrar'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              _launchURL(link);
+                            },
+                            child: Text('Ir al enlace'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                  child: const Icon(
+                    Icons.store,
+                    color: Colors.red,
+                    size: 40,
+                  ),
                 ),
               ),
             ),
@@ -83,6 +124,14 @@ class _MapScreenState extends State<MyTools> {
         });
       }
     });
+  }
+
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'No se pudo abrir el enlace $url';
+    }
   }
 
   @override
@@ -147,8 +196,16 @@ class _MapScreenState extends State<MyTools> {
                         getHardwareStoresWithTool(selectedTool);
                       });
                     },
-                    items: <String>['Martillo', 'Cinta Métrica', 'Destornillador']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: <String>[
+                      'Martillo',
+                      'Cinta Métrica',
+                      'Destornillador',
+                      'Bruñidora',
+                      'Esmeriladoras',
+                      'Mazo',
+                      'Barreta hexagonal',
+                      'Remachadora'
+                    ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),

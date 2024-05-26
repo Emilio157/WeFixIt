@@ -49,6 +49,7 @@ dependencies:
   latlong2: ^0.8.1
   geocoding: ^2.0.1
   http: ^0.13.3
+  url_launcher: ^6.2.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
