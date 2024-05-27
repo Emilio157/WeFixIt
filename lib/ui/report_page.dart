@@ -72,6 +72,7 @@ class _MyReportPageState extends State<MyReportPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Por favor complete todos los campos y seleccione una imagen')),
         );
+        Navigator.pop(context);
       }
     } catch (error) {
       print('Error al enviar el reporte: $error');
@@ -200,10 +201,7 @@ class _MyReportPageState extends State<MyReportPage> {
                   ),
                   onPressed: () {
                     saveReport();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
+                    setState(() {});
                   },
                   child: Text(
                     'Enviar Reporte',

@@ -47,22 +47,22 @@ class _MyLogOutState extends State<MyLogOut> {
       body: Center(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container( 
               height: 150,
               width: 350,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Color.fromARGB(255, 232, 232, 232),
+                color: const Color.fromARGB(255, 232, 232, 232),
               ),
               child: Row(
               children: [
-                SizedBox(width: 20),
-                Icon(Icons.person, size:  90),
-                SizedBox(width: 30),
+                const SizedBox(width: 20),
+                const Icon(Icons.person, size:  90),
+                const SizedBox(width: 30),
                 Column(
                   children: [
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     FutureBuilder<String>(
                         future: _getUserName(uid),
                         builder: (context, snapshot) {
@@ -83,7 +83,7 @@ class _MyLogOutState extends State<MyLogOut> {
                           }
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       FutureBuilder<String>(
                         future: _getMail(uid),
                         builder: (context, snapshot) {
@@ -109,7 +109,7 @@ class _MyLogOutState extends State<MyLogOut> {
               ],
             ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
                   onPressed: () async{
                     await FirebaseAuth.instance.signOut();
@@ -121,10 +121,18 @@ class _MyLogOutState extends State<MyLogOut> {
                         elevation: 3,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5)),
-                        minimumSize: Size(250, 70), 
+                        minimumSize: const Size(250, 70), 
                       ),
                   child: const Text("Cerrar Sesión", style: TextStyle(fontSize: 24, color: Colors.white),),
                 ),
+              const SizedBox(height: 20),
+              const Text("Aplicación desarrollada por el Equipo 1: ", style: TextStyle(color: Colors.grey, fontSize: 15),),
+              const Text("Jorge Daniel Pérez Zapata", style: TextStyle(color: Colors.grey, fontSize: 14)),
+              const Text("Jesús Emilio Alvarado Castellanos", style: TextStyle(color: Colors.grey, fontSize: 14)),
+              const Text("Samuel Gerardo Amaya García", style: TextStyle(color: Colors.grey, fontSize: 14)),
+              const Text("Mariana Cecilia Vaquera Cuellar", style: TextStyle(color: Colors.grey, fontSize: 14)),
+              const Text("Julio Derek Briones Torres", style: TextStyle(color: Colors.grey, fontSize: 14)),
+              const Text("Andrick Gael Garcia Villarreal", style: TextStyle(color: Colors.grey, fontSize: 14)),
           ],
         ),
       ),

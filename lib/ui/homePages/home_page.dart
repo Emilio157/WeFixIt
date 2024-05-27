@@ -188,6 +188,7 @@ class _MyInicioState extends State<MyInicio> {
                                 ),
                                   icon: Icon(Icons.delete),
                                   color: Colors.red,
+                                  iconSize: 35,
                                 ),
                               ],
                             ),
