@@ -7,7 +7,7 @@ import 'package:we_fix_it/ui/homePages/chats_user_list.dart';
 import 'package:we_fix_it/ui/homePages/diy_page.dart';
 import 'package:we_fix_it/ui/homePages/tools_page.dart';
 import 'package:we_fix_it/ui/homePages/profile_page.dart';
-import 'homePages/home_page.dart';
+import 'homePages/problems_by_user.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

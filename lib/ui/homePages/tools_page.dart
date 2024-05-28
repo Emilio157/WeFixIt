@@ -145,11 +145,17 @@ class _MyToolsState extends State<MyTools> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Buscar Ferreterías', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),),
+        title: const Text(
+          'Buscar Ferreterías',
+          style: TextStyle(
+              color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.red,
       ),
-      body: showMap
-          ? FlutterMap(
+      body: Stack(
+        children: [
+          if (showMap)
+            FlutterMap(
               options: MapOptions(
                 center: myPosition,
                 minZoom: 5,
@@ -183,47 +189,54 @@ class _MyToolsState extends State<MyTools> {
                   ],
                 ),
               ],
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 10,),
-                  Row(
-                    children: [
-                      const Text("Herramienta: ", style: TextStyle(fontSize: 20),), 
-                      const SizedBox(width: 20,),
-                      DropdownButton<String>(
-                        value: selectedTool,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedTool = newValue!;
-                            //getHardwareStoresWithTool(selectedTool); (Linea de codigo que causa bug)
-                          });
-                        },
-                        items: <String>[
-                          'Martillo',
-                          'Cinta Métrica',
-                          'Destornillador',
-                          'Bruñidora',
-                          'Esmeriladoras',
-                          'Mazo',
-                          'Barreta hexagonal',
-                          'Remachadora'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: searching
-                        ? CircularProgressIndicator()
-                        : ElevatedButton(
+            ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Herramienta: ",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    DropdownButton<String>(
+                      value: selectedTool,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedTool = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Martillo',
+                        'Cinta_Métrica',
+                        'Destornillador',
+                        'Bruñidora',
+                        'Esmeriladoras',
+                        'Mazo',
+                        'Barreta_hexagonal',
+                        'Remachadora'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: searching
+                      ? CircularProgressIndicator()
+                      : ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             foregroundColor: Colors.white,
@@ -231,13 +244,19 @@ class _MyToolsState extends State<MyTools> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                            onPressed: () => getHardwareStoresWithTool(selectedTool),
-                            child: Text('Buscar', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                          onPressed: () => getHardwareStoresWithTool(selectedTool),
+                          child: Text(
+                            'Buscar',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                  ),
-                ],
-              ),
+                        ),
+                ),
+              ],
             ),
+          ),
+        ],
+      ),
     );
   }
 }
