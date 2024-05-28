@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bubble/bubble.dart';
+import 'package:quickalert/quickalert.dart';
+
 
 class ChatUserScreen extends StatefulWidget {
   final String receiverId;
@@ -96,30 +98,23 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
 }
 
   void _showFinalizeDialog() {
-    showDialog(
+    
+    QuickAlert.show(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("¿Se solucionó el problema? (Al decir si, este chat sera borrado)"),
-          backgroundColor: Colors.white,
-          surfaceTintColor: const Color.fromARGB(255, 235, 115, 106),
-          actions: [
-            TextButton(
-              child: const Text("Sí", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),),
-              onPressed: () {
-                Navigator.of(context).pop(); 
-                _endChat(); 
-              },
-            ),
-            TextButton(
-              child: const Text("No", style: TextStyle(color: Colors.black, fontSize: 20),),
-              onPressed: () {
-                Navigator.of(context).pop(); 
-              },
-            ),
-          ],
-        );
+      type: QuickAlertType.info,
+      text: "Al decir si, este chat sera borrado",
+      showCancelBtn: true,
+      title: "¿Se solucionó el problema?",
+      confirmBtnText: 'Si',
+      onConfirmBtnTap: () {
+        _endChat(); 
+        Navigator.of(context).pop();
       },
+      cancelBtnText: 'No',
+      onCancelBtnTap: () {
+        Navigator.of(context).pop();
+      },
+      confirmBtnColor: Colors.red,
     );
   }
 

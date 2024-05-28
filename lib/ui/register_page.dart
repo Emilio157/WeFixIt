@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Importa Firestore
+import 'package:quickalert/quickalert.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -52,15 +53,20 @@ class _RegisterPageState extends State<RegisterPage> {
           builder: (context) {
             return const AlertDialog(
               title: Text('Contraseñas no coinciden'),
+              backgroundColor: Colors.white,
+              surfaceTintColor: const Color.fromARGB(255, 235, 115, 106),
             );
           },
         );
       }
     } on FirebaseAuthException catch (e) {
-      print("Error al crear usuario: ${e.message}");
-      Navigator.pop(context);
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Error al crear cuenta',
+      text: 'Datos ingresados no validos',
+      );
     }
-    
   }
 
   Widget buildEmail() {

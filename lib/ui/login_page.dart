@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quickalert/quickalert.dart';
+
 class LoginScreen extends StatefulWidget {
   final Function()? onTap;
   const LoginScreen({super.key,required this.onTap});
@@ -19,12 +21,12 @@ class _LoginScreenState extends State<LoginScreen>{
       password: passwordController.text,
     );
     } on FirebaseAuthException catch (e) {
-    showDialog(
-      context: context,
-      builder: (context) => const AlertDialog(
-        title: Text('Credenciales incorrectas'),
-      ),
-    );
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Error al iniciar sesión',
+      text: 'Credenciales Incorrectas',
+      );
   }
 }
     

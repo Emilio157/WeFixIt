@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:quickalert/quickalert.dart';
 
 class MyLogOut extends StatefulWidget {
   const MyLogOut({super.key});
@@ -38,6 +38,11 @@ class _MyLogOutState extends State<MyLogOut> {
       return 'Error';
     }
   }
+
+  Future<void> _signOut() async {
+  await FirebaseAuth.instance.signOut();
+  Navigator.pop(context);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +117,15 @@ class _MyLogOutState extends State<MyLogOut> {
             const SizedBox(height: 20),
             ElevatedButton(
                   onPressed: () async{
-                    await FirebaseAuth.instance.signOut();
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.confirm,
+                      title: '¿Esta segur@ que quiere cerrar sesión?',
+                      confirmBtnText: 'Si',
+                      onConfirmBtnTap: _signOut,
+                      cancelBtnText: 'No',
+                      confirmBtnColor: Colors.red,
+                      );
                   },
                   style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
