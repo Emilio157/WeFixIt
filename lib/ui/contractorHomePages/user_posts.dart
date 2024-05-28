@@ -54,26 +54,47 @@ class PostCard extends StatelessWidget {
   void _sendHelpRequest(BuildContext context) {
   final String? uid = problem['uid'];
   final String? problemId = problem['docId'];
-  final String? employeeUid = FirebaseAuth.instance.currentUser?.uid; 
+  final String? employeeUid = FirebaseAuth.instance.currentUser?.uid;
 
   if (uid != null && problemId != null && employeeUid != null) {
-    FirebaseFirestore.instance.collection('helpRequests').add({
-      'userId': uid,
-      'employeeId': employeeUid, 
-      'problemId': problemId,
-      'requestTime': FieldValue.serverTimestamp(),
-    }).then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Solicitud de ayuda enviada')),
-      );
+    final query = FirebaseFirestore.instance
+      .collection('helpRequests')
+      .where('userId', isEqualTo: uid)
+      .where('employeeId', isEqualTo: employeeUid)
+      .where('problemId', isEqualTo: problemId)
+      .limit(1);
+
+    query.get().then((querySnapshot) {
+      if (querySnapshot.docs.isEmpty) {
+        // No existing request found, create a new one
+        FirebaseFirestore.instance.collection('helpRequests').add({
+          'userId': uid,
+          'employeeId': employeeUid,
+          'problemId': problemId,
+          'requestTime': FieldValue.serverTimestamp(),
+        }).then((value) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Solicitud de ayuda enviada')),
+          );
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+          );
+        });
+      } else {
+        // Existing request found, show an error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: Ya existe una solicitud de ayuda para este problema')),
+        );
+      }
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+        SnackBar(content: Text('Error: No se pudo verificar la solicitud de ayuda existente')),
       );
     });
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+      SnackBar(content: Text('Error: Datos incompletos para enviar la solicitud de ayuda')),
     );
   }
 }
@@ -170,17 +191,18 @@ class DetailPage extends StatelessWidget {
   final Map<String, dynamic> problem;
 
   const DetailPage({Key? key, required this.problem}) : super(key: key);
-  void _sendHelpRequest(BuildContext context) {
+  Future<void> _sendHelpRequest(BuildContext context) async {
   final String? uid = problem['uid'];
   final String? problemId = problem['docId'];
   final String? employeeUid = FirebaseAuth.instance.currentUser?.uid; 
 
   if (uid != null && problemId != null && employeeUid != null) {
+  bool isDuplicate = await checkDuplicateRequest(uid, employeeUid, problemId);
+  if (!isDuplicate) {
     FirebaseFirestore.instance.collection('helpRequests').add({
       'userId': uid,
       'employeeId': employeeUid, 
       'problemId': problemId,
-      'requestTime': FieldValue.serverTimestamp(),
     }).then((value) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Solicitud de ayuda enviada')),
@@ -192,8 +214,29 @@ class DetailPage extends StatelessWidget {
     });
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+      SnackBar(content: Text('Error: Ya existe una solicitud con estos datos')),
     );
+  }
+} else {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+  );
+}
+
+}
+Future<bool> checkDuplicateRequest(String userId, String employeeId, String problemId) async {
+  try {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('helpRequests')
+        .where('userId', isEqualTo: userId)
+        .where('employeeId', isEqualTo: employeeId)
+        .where('problemId', isEqualTo: problemId)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
+  } catch (error) {
+    print('Error al verificar duplicado: $error');
+    return false;
   }
 }
 

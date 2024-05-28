@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
  // Importa la página del contratista
 import 'package:we_fix_it/ui/home_page_user.dart'; // Importa la página del usuario
 import 'package:we_fix_it/ui/login_or_register_page.dart';
-import 'package:we_fix_it/ui/widgets/home_page_contractor.dart';
+import 'package:we_fix_it/ui/home_page_contractor.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({Key? key});
