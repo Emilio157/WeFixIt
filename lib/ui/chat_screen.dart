@@ -86,7 +86,7 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Chat finalizado')),
+        const SnackBar(content: Text('Chat finalizado')),
       );
 
       Navigator.of(context).pop();
@@ -141,11 +141,11 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
 
               if (!isContractor) {
                 return IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: _showFinalizeDialog,
                 );
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             },
           )
@@ -171,7 +171,7 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 var messages = snapshot.data!.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
@@ -186,7 +186,7 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                       future: _getUserInfo(message['senderId']),
                       builder: (context, userInfoSnapshot) {
                         if (!userInfoSnapshot.hasData) {
-                          return SizedBox();
+                          return const SizedBox();
                         }
                         String userName = userInfoSnapshot.data!['Name'];
 
@@ -198,9 +198,9 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                               children: [
                                 Text(userName, style: const TextStyle(color: Color.fromARGB(255, 95, 95, 95))),
                                 Bubble(
-                                  color: isMe ? Color.fromARGB(255, 253, 95, 84) : Color.fromARGB(255, 160, 160, 160), 
+                                  color: isMe ? const Color.fromARGB(255, 253, 95, 84) : const Color.fromARGB(255, 160, 160, 160), 
                                   nip: isMe ? BubbleNip.rightTop : BubbleNip.leftTop,
-                                  radius: Radius.circular(8),
+                                  radius: const Radius.circular(8),
                                   child: Text(
                                     message['message'],
                                     style: const TextStyle(color: Colors.white, fontSize: 20),
@@ -223,10 +223,10 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
               children: <Widget>[
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                    padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                     child: TextField(
                       controller: _messageController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintStyle: TextStyle(fontSize: 22),
                         hintText: 'Escribe tu mensaje...',
                       ),
@@ -238,7 +238,7 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                   width: 50,
                   decoration: const ShapeDecoration(shape: CircleBorder(), color: Colors.red),
                   child: IconButton(
-                    icon: Icon(Icons.send, size: 25, color: Colors.white, ),
+                    icon: const Icon(Icons.send, size: 25, color: Colors.white, ),
                     onPressed: _sendMessage,
                   ),
                 ),

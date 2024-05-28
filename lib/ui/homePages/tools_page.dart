@@ -9,7 +9,7 @@ const MAPBOX_ACCESS_TOKEN =
     'pk.eyJ1Ijoiam9yZ2UxMjNkYW4iLCJhIjoiY2x3ZW12MGlqMW1laTJqbmlnazdmYm1rZSJ9.AaTUOIwiNbfCexj2AKngSQ';
 
 class MyTools extends StatefulWidget {
-  const MyTools({Key? key}) : super(key: key);
+  const MyTools({super.key});
 
   @override
   State<MyTools> createState() => _MyToolsState();
@@ -20,7 +20,7 @@ class _MyToolsState extends State<MyTools> {
   List<Marker> hardwareStoreMarkers = [];
   bool searching = false;
   bool showMap = false;
-  String selectedTool = 'Martillo'; // Valor inicial del dropdown
+  String selectedTool = 'Martillo'; 
 
   Future<Position> determinePosition() async {
     LocationPermission permission;
@@ -42,7 +42,7 @@ class _MyToolsState extends State<MyTools> {
         myPosition = LatLng(position.latitude, position.longitude);
       });
     } catch (e) {
-      // Manejo de errores si es necesario
+      print("Error al obtener la ubicación: $e");
     }
   }
 
@@ -74,15 +74,15 @@ class _MyToolsState extends State<MyTools> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Ferretería'),
+                        title: const Text('Ferretería'),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Nombre: $name'),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text('Dirección: $address'),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text('Enlace: $link'),
                           ],
                         ),
@@ -91,25 +91,23 @@ class _MyToolsState extends State<MyTools> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text('Cerrar'),
+                            child: const Text('Cerrar'),
                           ),
                           ElevatedButton(
                             onPressed: () {
                               _launchURL(link);
                             },
-                            child: Text('Ir al enlace'),
+                            child: const Text('Ir al enlace'),
                           ),
                         ],
                       );
                     },
                   );
                 },
-                child: Container(
-                  child: const Icon(
-                    Icons.store,
-                    color: Colors.red,
-                    size: 40,
-                  ),
+                child: const Icon(
+                  Icons.store,
+                  color: Colors.red,
+                  size: 40,
                 ),
               ),
             ),
@@ -154,7 +152,9 @@ class _MyToolsState extends State<MyTools> {
       ),
       body: Stack(
         children: [
-          if (showMap)
+          if (myPosition == null)
+            Center(child: CircularProgressIndicator())
+          else if (showMap)
             FlutterMap(
               options: MapOptions(
                 center: myPosition,
@@ -232,10 +232,10 @@ class _MyToolsState extends State<MyTools> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Center(
                   child: searching
-                      ? CircularProgressIndicator()
+                      ? const CircularProgressIndicator()
                       : ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -245,7 +245,7 @@ class _MyToolsState extends State<MyTools> {
                             ),
                           ),
                           onPressed: () => getHardwareStoresWithTool(selectedTool),
-                          child: Text(
+                          child: const Text(
                             'Buscar',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),

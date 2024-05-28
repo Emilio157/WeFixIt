@@ -16,6 +16,23 @@ class MyLogOut extends StatefulWidget {
 class _MyLogOutState extends State<MyLogOut> {
   final ImagePicker _picker = ImagePicker();
   File? _imageFile;
+  String? _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImageUrl();
+  }
+
+  Future<void> _loadProfileImageUrl() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String url = await _getProfileImageUrl(user.uid);
+      setState(() {
+        _profileImageUrl = url;
+      });
+    }
+  }
 
   Future<String> _getUserName(String uid) async {
     try {
@@ -80,6 +97,10 @@ class _MyLogOutState extends State<MyLogOut> {
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
 
         await FirebaseFirestore.instance.collection('Usuarios').doc(user.uid).update({'ProfileImageUrl': downloadUrl});
+        
+        setState(() {
+          _profileImageUrl = downloadUrl;
+        });
       } catch (e) {
         print('Error uploading image: $e');
       }
@@ -112,23 +133,14 @@ class _MyLogOutState extends State<MyLogOut> {
                   const SizedBox(width: 20),
                   GestureDetector(
                     onTap: _pickImage,
-                    child: FutureBuilder<String>(
-                      future: _getProfileImageUrl(uid),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return const Icon(Icons.person, size: 90);
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Icon(Icons.person, size: 90);
-                        } else {
-                          return CircleAvatar(
-                            radius: 45,
-                            backgroundImage: NetworkImage(snapshot.data!),
-                          );
-                        }
-                      },
-                    ),
+                    child: _profileImageUrl == null
+                        ? const CircularProgressIndicator()
+                        : _profileImageUrl!.isEmpty
+                            ? const Icon(Icons.person_add_alt_1_rounded, size: 90)
+                            : CircleAvatar(
+                                radius: 45,
+                                backgroundImage: NetworkImage(_profileImageUrl!),
+                              ),
                   ),
                   const SizedBox(width: 30),
                   Column(

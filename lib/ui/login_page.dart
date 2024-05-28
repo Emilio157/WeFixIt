@@ -15,21 +15,20 @@ class _LoginScreenState extends State<LoginScreen>{
     final passwordController = TextEditingController();
 
   void signUserIn(BuildContext context) async {
-  try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    );
-    } on FirebaseAuthException catch (e) {
-    QuickAlert.show(
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    } on FirebaseAuthException {
+      QuickAlert.show(
         context: context,
         type: QuickAlertType.error,
         title: 'Error al iniciar sesión',
-      text: 'Credenciales Incorrectas',
+        text: 'Credenciales Incorrectas',
       );
+    }
   }
-}
-    
 
   Widget buildEmail() {
     return Column(

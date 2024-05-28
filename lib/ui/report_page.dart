@@ -5,10 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:we_fix_it/ui/home_page_user.dart';
 import 'package:we_fix_it/ui/widgets/widget_pick_image.dart';
 import 'dart:math';
-import 'package:quickalert/quickalert.dart';
 
 String generateRandomName() {
   Random random = Random();
@@ -29,7 +27,7 @@ class _MyReportPageState extends State<MyReportPage> {
   bool _imageSelected = false;
   final TextEditingController problemController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  TextEditingController _date = TextEditingController();
+  final TextEditingController _date = TextEditingController();
 
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -67,18 +65,18 @@ class _MyReportPageState extends State<MyReportPage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Reporte enviado con éxito')),
+          const SnackBar(content: Text('Reporte enviado con éxito')),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Por favor complete todos los campos y seleccione una imagen')),
+          const SnackBar(content: Text('Por favor complete todos los campos y seleccione una imagen')),
         );
       }
     } catch (error) {
       print('Error al enviar el reporte: $error');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ocurrió un error al enviar el reporte')),
+        const SnackBar(content: Text('Ocurrió un error al enviar el reporte')),
       );
     }
   }
@@ -120,7 +118,7 @@ class _MyReportPageState extends State<MyReportPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text('Problema', style: TextStyle(fontSize: 17)),
+              const Text('Problema', style: TextStyle(fontSize: 17)),
               TextField(
                 controller: problemController,
                 decoration: InputDecoration(
@@ -131,7 +129,7 @@ class _MyReportPageState extends State<MyReportPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text('Descripción del problema', style: TextStyle(fontSize: 17)),
+              const Text('Descripción del problema', style: TextStyle(fontSize: 17)),
               TextField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -144,7 +142,7 @@ class _MyReportPageState extends State<MyReportPage> {
                 controller: descriptionController,
               ),
               const SizedBox(height: 20),
-              Text('Fecha Límite', style: TextStyle(fontSize: 17)),
+              const Text('Fecha Límite', style: TextStyle(fontSize: 17)),
               TextField(
                 controller: _date,
                 decoration: const InputDecoration(
@@ -187,23 +185,23 @@ class _MyReportPageState extends State<MyReportPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _imageSelected
-                        ? Icon(Icons.check, color: Colors.green)
+                        ? const Icon(Icons.check, color: Colors.green)
                         : const Icon(Icons.add_a_photo),
                     const SizedBox(width: 10),
-                    _imageSelected ? Text('Imagen adjuntada') : Text('Seleccionar Imagen'),
+                    _imageSelected ? const Text('Imagen adjuntada') : const Text('Seleccionar Imagen'),
                   ],
                 ),
               ),
               const SizedBox(height: 30),
               Center(
                 child: ElevatedButton(
-                  style: ButtonStyle(
+                  style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll<Color>(Colors.red),
                   ),
                   onPressed: () {
                     saveReport();
                   },
-                  child: Text(
+                  child: const Text(
                     'Enviar Reporte',
                     style: TextStyle(
                       color: Colors.white,

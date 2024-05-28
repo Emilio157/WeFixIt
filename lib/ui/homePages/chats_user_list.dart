@@ -14,7 +14,7 @@ class ChatListScreen extends StatelessWidget {
           title: Text('Chats'),
         ),
         body: const Center(
-          child: Text('No user is currently logged in.'),
+          child: Text('Actualmente no hay un usuario ingresado'),
         ),
       );
     }

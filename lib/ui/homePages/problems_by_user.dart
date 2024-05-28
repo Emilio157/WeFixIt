@@ -58,10 +58,10 @@ class _MyInicioState extends State<MyInicio> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.red,
-        title: Text('Contratistas',
+        title: const Text('Contratistas',
         style: TextStyle(
         color: Colors.white, 
-        fontWeight: FontWeight.bold// Establece el color del texto en blanco
+        fontWeight: FontWeight.bold,
       )),
         content: SingleChildScrollView(
           child: Column(
@@ -73,7 +73,7 @@ class _MyInicioState extends State<MyInicio> {
                         backgroundImage: NetworkImage(contractor['profileImageUrl']),
                       )
                     : const Icon(Icons.person, size: 40,color: Colors.white,),
-                title: Text(contractor['name'],style: TextStyle(
+                title: Text(contractor['name'],style: const TextStyle(
                         color: Colors.white
                       )),
                 onTap: () {
@@ -104,11 +104,10 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
       return data;
     }).toList();
 
-    // Show dialog to display problems
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Problemas',
+        title: const Text('Problemas',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold
@@ -120,7 +119,7 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
             children: problems.map((problem) {
               return ListTile(
                 title: Text(problem['problem'],
-                        style: TextStyle(
+                        style: const TextStyle(
                         color: Colors.white
                       )),
                 onTap: () {
@@ -156,30 +155,30 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
             'problemId': problemId,
           }).then((value) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Solicitud de ayuda enviada')),
+              const SnackBar(content: Text('Solicitud de ayuda enviada')),
             );
             Navigator.pop(context);
             Navigator.pop(context);
           }).catchError((error) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+              const SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
             );
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ya has enviado una solicitud de ayuda para este problema con este contratista.')),
+            const SnackBar(content: Text('Ya has enviado una solicitud de ayuda para este problema con este contratista.')),
           );
           Navigator.pop(context);
           Navigator.pop(context);
         }
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: No se pudo verificar la existencia de solicitudes previas')),
+          const SnackBar(content: Text('Error: No se pudo verificar la existencia de solicitudes previas')),
         );
       });
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+      const SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
     );
   }
 }
@@ -191,25 +190,25 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
       children: <Widget>[
         Column(
           children: [
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Align(
               alignment: Alignment.topRight,
               child: Padding(
-                padding: EdgeInsets.only(right: 50),
+                padding: const EdgeInsets.only(right: 50),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 232, 232, 232),
+                    backgroundColor: const Color.fromARGB(255, 232, 232, 232),
                     foregroundColor: Colors.black,
                     shadowColor: Colors.black,
                     elevation: 3,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                    minimumSize: Size(300, 40),
+                    minimumSize: const Size(300, 40),
                   ),
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MyReportPage(title: "Reportar Problema")),
+                    MaterialPageRoute(builder: (context) => const MyReportPage(title: "Reportar Problema")),
                   ),
-                  child: Text(
+                  child: const Text(
                     '¡Crea un reporte de problema!',
                     style: TextStyle(fontSize: 20),
                   ),
@@ -223,9 +222,9 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
           child: IconButton(
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MyReportPage(title: "Reportar Problema")),
+              MaterialPageRoute(builder: (context) => const MyReportPage(title: "Reportar Problema")),
             ),
-            icon: Icon(Icons.email),
+            icon: const Icon(Icons.email),
             iconSize: 35,
             color: Colors.red,
           ),
@@ -236,11 +235,11 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
             stream: _getProblemsStream(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return Center(child: Text('No problems found.'));
+                return const Center(child: Text('No problems found.'));
               }
 
               final problems = snapshot.data!.docs.map((doc) {
@@ -251,7 +250,7 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
 
               return ListView.builder(
                 shrinkWrap: true,
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 itemCount: problems.length,
                 itemBuilder: (context, index) {
                   final problem = problems[index];
@@ -259,8 +258,8 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
                     onTap: () => _navigateToDetailPage(context, problem),
                     child: Container(
                       width: double.infinity,
-                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      padding: EdgeInsets.all(12),
+                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -269,7 +268,7 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
                             color: Colors.grey.withOpacity(0.3),
                             spreadRadius: 2,
                             blurRadius: 3,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -283,7 +282,7 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
                               width: 300,
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -294,15 +293,15 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
                                     Center(
                                       child: Text(
                                         problem['problem'],
-                                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                                        style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Text(
                                       "Fecha límite: " + problem['date'],
-                                      style: TextStyle(fontSize: 18),
+                                      style: const TextStyle(fontSize: 18),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -311,7 +310,7 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
                               ),
                              
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: const Icon(Icons.delete),
                                 color: Colors.red,
                                 iconSize: 35,
                                 onPressed: () => QuickAlert.show(
@@ -345,13 +344,13 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
       ],
     ),
     floatingActionButton: Align(
-      alignment: Alignment(-.8, 0.67),
+      alignment: const Alignment(-.8, 0.67),
       child: FloatingActionButton.extended(
         onPressed: () async {
           await  _showContractors(context);
         },
-        label: Text('Solicitar ayuda', style: TextStyle(color: Colors.white)),
-        icon: Icon(Icons.help,color: Colors.white,),
+        label: const Text('Solicitar ayuda', style: TextStyle(color: Colors.white)),
+        icon: const Icon(Icons.help,color: Colors.white,),
         backgroundColor: Colors.red,
        
       ),
@@ -409,7 +408,7 @@ class DetailPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 problem['problem'],
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               const PreferredSize(
@@ -427,7 +426,7 @@ class DetailPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 problem['date'],
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -437,10 +436,10 @@ class DetailPage extends StatelessWidget {
               const SizedBox(height: 8),
               Container(
                 width: 350,
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Color.fromARGB(255, 219, 219, 219),
+                  color: const Color.fromARGB(255, 219, 219, 219),
                 ),
                 child: Text(
                   problem['description'] ?? 'No description available.',

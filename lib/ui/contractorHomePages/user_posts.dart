@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserPosts extends StatefulWidget {
-  const UserPosts({Key? key}) : super(key: key);
+  const UserPosts({super.key});
 
   @override
   State<UserPosts> createState() => _UserPostsState();
@@ -33,7 +33,7 @@ class _UserPostsState extends State<UserPosts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Problemas Reportados', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),)),
+        title: const Center(child: Text('Problemas Reportados', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),)),
       ),
       body: ListView.builder(
         itemCount: problems.length,
@@ -66,7 +66,6 @@ class PostCard extends StatelessWidget {
 
     query.get().then((querySnapshot) {
       if (querySnapshot.docs.isEmpty) {
-        // No existing request found, create a new one
         FirebaseFirestore.instance.collection('helpRequests').add({
           'userId': uid,
           'employeeId': employeeUid,
@@ -74,27 +73,26 @@ class PostCard extends StatelessWidget {
           'requestTime': FieldValue.serverTimestamp(),
         }).then((value) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Solicitud de ayuda enviada')),
+            const SnackBar(content: Text('Solicitud de ayuda enviada')),
           );
         }).catchError((error) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+            const SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
           );
         });
       } else {
-        // Existing request found, show an error message
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: Ya existe una solicitud de ayuda para este problema')),
+          const SnackBar(content: Text('Error: Ya existe una solicitud de ayuda para este problema')),
         );
       }
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: No se pudo verificar la solicitud de ayuda existente')),
+        const SnackBar(content: Text('Error: No se pudo verificar la solicitud de ayuda existente')),
       );
     });
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: Datos incompletos para enviar la solicitud de ayuda')),
+      const SnackBar(content: Text('Error: Datos incompletos para enviar la solicitud de ayuda')),
     );
   }
 }
@@ -112,8 +110,8 @@ class PostCard extends StatelessWidget {
       onTap: () => _navigateToDetailWorkPage(context, problem),
       child: Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      padding: EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -122,7 +120,7 @@ class PostCard extends StatelessWidget {
             color: Colors.grey.withOpacity(0.3),
               spreadRadius: 2,
               blurRadius: 3,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
       ),
@@ -136,7 +134,7 @@ class PostCard extends StatelessWidget {
                 width: 300,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -151,7 +149,7 @@ class PostCard extends StatelessWidget {
                             width: 250,
                             child: Text(
                                 problem['problem'],
-                                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -160,23 +158,23 @@ class PostCard extends StatelessWidget {
                             alignment: Alignment.centerRight,
                             child: IconButton(
                               iconSize: 26,
-                              icon: Icon(Icons.help_outline),
+                              icon: const Icon(Icons.help_outline),
                               onPressed: () => _sendHelpRequest(context),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                         Text("Fecha límite: " +
                           problem['date'],
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
               ],
             ),
           ],
@@ -190,7 +188,7 @@ class PostCard extends StatelessWidget {
 class DetailPage extends StatelessWidget {
   final Map<String, dynamic> problem;
 
-  const DetailPage({Key? key, required this.problem}) : super(key: key);
+  const DetailPage({super.key, required this.problem});
   Future<void> _sendHelpRequest(BuildContext context) async {
   final String? uid = problem['uid'];
   final String? problemId = problem['docId'];
@@ -205,21 +203,21 @@ class DetailPage extends StatelessWidget {
       'problemId': problemId,
     }).then((value) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Solicitud de ayuda enviada')),
+        const SnackBar(content: Text('Solicitud de ayuda enviada')),
       );
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+        const SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
       );
     });
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: Ya existe una solicitud con estos datos')),
+      const SnackBar(content: Text('Error: Ya existe una solicitud con estos datos')),
     );
   }
 } else {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
+    const SnackBar(content: Text('Error: No se pudo enviar la solicitud de ayuda')),
   );
 }
 
@@ -278,7 +276,7 @@ Future<bool> checkDuplicateRequest(String userId, String employeeId, String prob
                   const SizedBox(height: 8),
                   Text(
                     problem['problem'],
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   const PreferredSize(
@@ -295,7 +293,7 @@ Future<bool> checkDuplicateRequest(String userId, String employeeId, String prob
                   const SizedBox(height: 8),
                   Text(
                     problem['date'],
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -305,10 +303,10 @@ Future<bool> checkDuplicateRequest(String userId, String employeeId, String prob
                   const SizedBox(height: 8),
                   Container(
                     width: 350,
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color.fromARGB(255, 219, 219, 219),
+                    color: const Color.fromARGB(255, 219, 219, 219),
                   ),
                     child: Text(
                       problem['description'] ?? 'No description available.',

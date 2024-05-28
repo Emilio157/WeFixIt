@@ -72,7 +72,7 @@ class _MyDiyState extends State<MyDiy> {
       
                   return ListView.builder(
                   shrinkWrap: true,
-                  physics: ScrollPhysics(),
+                  physics: const ScrollPhysics(),
                   itemCount: projects.length,
                   itemBuilder: (context, index) {
                     final project = projects[index];
@@ -85,8 +85,8 @@ class _MyDiyState extends State<MyDiy> {
                         ),
                       child: Container(
                               width: double.infinity,
-                              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              padding: EdgeInsets.all(12),
+                              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              padding: const EdgeInsets.all(12),
                               
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -96,7 +96,7 @@ class _MyDiyState extends State<MyDiy> {
                                     color: Colors.grey.withOpacity(0.3),
                                     spreadRadius: 2,
                                     blurRadius: 3,
-                                    offset: Offset(0, 2),
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
@@ -111,28 +111,28 @@ class _MyDiyState extends State<MyDiy> {
                                       width: 100,
                                     ),
                                   ),
-                                  SizedBox(width: 12),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           project['name'],
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
                                         Text(
                                           project['date'],
-                                          style: TextStyle(fontSize: 14),
+                                          style: const TextStyle(fontSize: 14),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   IconButton(
                                       icon: const Icon(
                                         Icons.delete,
@@ -173,7 +173,7 @@ class _MyDiyState extends State<MyDiy> {
               ),
       ),
       Align(
-        alignment: Alignment(0.9, 0.67),
+        alignment: const Alignment(0.9, 0.67),
         child: FloatingActionButton(
             backgroundColor: Colors.red,
             onPressed: () => Navigator.push(
@@ -200,7 +200,7 @@ class ProjectDetailScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 75,
         title: Text(project['name'],
-        style: TextStyle( fontSize: 24, fontWeight: FontWeight.bold),),
+        style: const TextStyle( fontSize: 24, fontWeight: FontWeight.bold),),
         bottom: const PreferredSize(
             preferredSize: Size.fromHeight(1),
             child: Divider(
@@ -238,11 +238,11 @@ class ProjectDetailScreen extends StatelessWidget {
                 thickness: 5,),
             ),
             const SizedBox(height: 8),
-            Text('Fecha del proyecto: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-            Text('${project['date']}', style: TextStyle(fontSize: 16),),
+            const Text('Fecha del proyecto: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+            Text('${project['date']}', style: const TextStyle(fontSize: 16),),
             const SizedBox(height: 8),
-            Text('Descripción: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-            Text(project['description'], style: TextStyle(fontSize: 16),),
+            const Text('Descripción: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+            Text(project['description'], style: const TextStyle(fontSize: 16),),
           ],
         ),
       ),
@@ -404,7 +404,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
               const SizedBox(height: 16),
               Center(
                 child: ElevatedButton(
-                  style: ButtonStyle(
+                  style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll<Color>(Colors.red),
                   ),
                   onPressed: _saveProject,

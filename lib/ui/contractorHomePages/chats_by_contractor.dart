@@ -12,17 +12,17 @@ class EmployeeChatListScreen extends StatelessWidget {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Chats del Empleado'),
+          title: const Text('Chats del Empleado'),
         ),
-        body: Center(
-          child: Text('No user is currently logged in.'),
+        body: const Center(
+          child: Text('Actualmente no hay un usuario ingresado'),
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chats del Empleado'),
+        title: const Text('Chats del Empleado'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -47,7 +47,7 @@ class EmployeeChatListScreen extends StatelessWidget {
                 future: FirebaseFirestore.instance.collection('Usuarios').doc(userId).get(),
                 builder: (context, userSnapshot) {
                   if (!userSnapshot.hasData) {
-                    return ListTile(
+                    return const ListTile(
                       title: Text('Cargando...'),
                       subtitle: Text('Cargando...'),
                     );
@@ -63,7 +63,7 @@ class EmployeeChatListScreen extends StatelessWidget {
                         return Card(
                           child: ListTile(
                             title: Text(userName),
-                            subtitle: Text('Cargando problema...'),
+                            subtitle: const Text('Cargando problema...'),
                           ),
                         );
                       }
