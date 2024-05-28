@@ -44,23 +44,38 @@ class _MyInicioState extends State<MyInicio> {
         .collection('Usuarios')
         .where('Contractor', isEqualTo: true)
         .get();
-    
+
     List<Map<String, dynamic>> contractors = contractorsSnapshot.docs.map((doc) {
+      var data = doc.data() as Map<String, dynamic>;
       return {
         'uid': doc.id,
-        'name': doc['Name'], 
+        'name': data['Name'],
+        'profileImageUrl': data.containsKey('ProfileImageUrl') ? data['ProfileImageUrl'] : '',
       };
     }).toList();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Contratistas'),
+        backgroundColor: Colors.red,
+        title: Text('Contratistas',
+        style: TextStyle(
+        color: Colors.white, 
+        fontWeight: FontWeight.bold// Establece el color del texto en blanco
+      )),
         content: SingleChildScrollView(
           child: Column(
             children: contractors.map((contractor) {
               return ListTile(
-                title: Text(contractor['name']),
+                leading: contractor['profileImageUrl'].isNotEmpty
+                    ? CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(contractor['profileImageUrl']),
+                      )
+                    : const Icon(Icons.person, size: 40,color: Colors.white,),
+                title: Text(contractor['name'],style: TextStyle(
+                        color: Colors.white
+                      )),
                 onTap: () {
                   _showProblems(context, contractor);
                 },
@@ -74,6 +89,7 @@ class _MyInicioState extends State<MyInicio> {
     print('Error getting contractors: $e');
   }
 }
+
 
 Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor) async {
   try {
@@ -92,12 +108,21 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Problemas'),
+        title: Text('Problemas',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold
+                )
+                ),
+        backgroundColor: Colors.red,
         content: SingleChildScrollView(
           child: Column(
             children: problems.map((problem) {
               return ListTile(
-                title: Text(problem['problem']),
+                title: Text(problem['problem'],
+                        style: TextStyle(
+                        color: Colors.white
+                      )),
                 onTap: () {
                   _sendHelpRequest(context, contractor, problem);
                 },
@@ -284,13 +309,7 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
                                   ],
                                 ),
                               ),
-                              IconButton(
-                                onPressed: () async {
-                                  await _showContractors(context);
-                                },
-                                icon: Icon(Icons.help_outline),
-                                color: Colors.blue,
-                              ),
+                             
                               IconButton(
                                 icon: Icon(Icons.delete),
                                 color: Colors.red,
@@ -325,13 +344,17 @@ Future<void> _showProblems(BuildContext context, Map<String, dynamic> contractor
         ),
       ],
     ),
-    floatingActionButton: FloatingActionButton.extended(
-      onPressed: () async {
-        await  _showContractors(context);
-      },
-      label: Text('Solicitar ayuda'),
-      icon: Icon(Icons.help),
-      backgroundColor: Colors.red,
+    floatingActionButton: Align(
+      alignment: Alignment(-.8, 0.67),
+      child: FloatingActionButton.extended(
+        onPressed: () async {
+          await  _showContractors(context);
+        },
+        label: Text('Solicitar ayuda', style: TextStyle(color: Colors.white)),
+        icon: Icon(Icons.help,color: Colors.white,),
+        backgroundColor: Colors.red,
+       
+      ),
     ),
   );
 

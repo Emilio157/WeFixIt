@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/chat_screen.dart';
+
 
 class EmployeeChatListScreen extends StatelessWidget {
   final User? user = FirebaseAuth.instance.currentUser;
@@ -53,6 +54,7 @@ class EmployeeChatListScreen extends StatelessWidget {
                   }
                   var userData = userSnapshot.data!.data() as Map<String, dynamic>?;
                   var userName = userData != null ? userData['Name'] : 'Desconocido';
+                  var profileImageUrl = userData != null ? userData['ProfileImageUrl'] : null;
 
                   return FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance.collection('userProblems').doc(problemId).get(),
@@ -72,9 +74,27 @@ class EmployeeChatListScreen extends StatelessWidget {
                         shadowColor: Colors.black,
                         color: const Color.fromARGB(255, 253, 95, 84),
                         child: ListTile(
-                          leading: const Icon(Icons.person, size: 40, color: Colors.white,),
-                          title: Text(userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white,)),
-                          subtitle: Text('Problema: $problemName', style: const TextStyle(fontSize: 14, color: Colors.white,),),
+                          leading: profileImageUrl != null && profileImageUrl.isNotEmpty
+                              ? CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: NetworkImage(profileImageUrl),
+                                )
+                              : const Icon(Icons.person, size: 40, color: Colors.white),
+                          title: Text(
+                            userName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Problema: $problemName',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -99,4 +119,3 @@ class EmployeeChatListScreen extends StatelessWidget {
     );
   }
 }
-

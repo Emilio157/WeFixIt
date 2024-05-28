@@ -53,6 +53,7 @@ class ChatListScreen extends StatelessWidget {
                   }
                   var employeeData = employeeSnapshot.data!.data() as Map<String, dynamic>?;
                   var employeeName = employeeData != null ? employeeData['Name'] : 'Desconocido';
+                  var profileImageUrl = employeeData != null ? employeeData['ProfileImageUrl'] : null;
 
                   return FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance.collection('userProblems').doc(problemId).get(),
@@ -72,9 +73,27 @@ class ChatListScreen extends StatelessWidget {
                         shadowColor: Colors.black,
                         color: const Color.fromARGB(255, 253, 95, 84),
                         child: ListTile(
-                          leading: const Icon(Icons.person, size: 40, color: Colors.white,),
-                          title: Text(employeeName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,color: Colors.white,)),
-                          subtitle: Text('Problema: $problemName', style: const TextStyle(fontSize: 14, color: Colors.white,)),
+                          leading: profileImageUrl != null && profileImageUrl.isNotEmpty
+                              ? CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: NetworkImage(profileImageUrl),
+                                )
+                              : const Icon(Icons.person, size: 40, color: Colors.white),
+                          title: Text(
+                            employeeName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Problema: $problemName',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,
