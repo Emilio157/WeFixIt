@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:we_fix_it/ui/report_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quickalert/quickalert.dart';
 
 class MyInicio extends StatefulWidget {
   const MyInicio({Key? key});
@@ -11,46 +12,31 @@ class MyInicio extends StatefulWidget {
 }
 
 class _MyInicioState extends State<MyInicio> {
-  List<Map<String, dynamic>> problems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _getProblems();
-  }
-
-  Future<void> _getProblems() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final String uid = user.uid;
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('userProblems')
-          .where('uid', isEqualTo: uid)
-          .get();
-      setState(() {
-         problems = snapshot.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          data['docId'] = doc.id;
-          return data;
-        }).toList();
-      });
-    }
-  }
 
   Future<void> _deleteProblem(String docId, String uid) async {
-  final User? user = FirebaseAuth.instance.currentUser;
-  if (user != null && user.uid == uid) {
-    try {
-      await FirebaseFirestore.instance.collection('userProblems').doc(docId).delete();
-      await _getProblems();
-    } catch (e) {
-      print("Error deleting problem: $e");
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null && user.uid == uid) {
+      try {
+        await FirebaseFirestore.instance.collection('userProblems').doc(docId).delete();
+      } catch (e) {
+        print("Error deleting problem: $e");
+      }
+    } else {
+      print("No se tiene acceso para eliminar este problema");
     }
-  } else {
-    print("No se tiene acceso para eliminar este problema");
   }
-}
 
+  Stream<QuerySnapshot> _getProblemsStream() {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return FirebaseFirestore.instance
+          .collection('userProblems')
+          .where('uid', isEqualTo: user.uid)
+          .snapshots();
+    } else {
+      return const Stream.empty();
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -99,107 +85,115 @@ class _MyInicioState extends State<MyInicio> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 60),
-              child: Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemCount: problems.length,
-                  itemBuilder: (context, index) {
-                    final problem = problems[index];
-                    return GestureDetector(
-                      onTap: () => _navigateToDetailPage(context, problem),
-                      child: Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                problem['imageLink'],
-                                height: 300,
-                                width: 300,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _getProblemsStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No problems found.'));
+                  }
+
+                  final problems = snapshot.data!.docs.map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    data['docId'] = doc.id;
+                    return data;
+                  }).toList();
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemCount: problems.length,
+                    itemBuilder: (context, index) {
+                      final problem = problems[index];
+                      return GestureDetector(
+                        onTap: () => _navigateToDetailPage(context, problem),
+                        child: Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 2),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          problem['problem'],
-                                          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  problem['imageLink'],
+                                  height: 300,
+                                  width: 300,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            problem['problem'],
+                                            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Fecha límite: " + problem['date'],
+                                          style: TextStyle(fontSize: 18),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "Fecha límite: " + problem['date'],
-                                        style: TextStyle(fontSize: 18),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () => showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("¿Esta Segur@ que quiere borrar el reporte?"),
-                                        backgroundColor: Colors.white,
-                                        surfaceTintColor: const Color.fromARGB(255, 235, 115, 106),
-                                        actions: [
-                                          TextButton(
-                                            child: const Text("Sí", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 20),),
-                                            onPressed: () {
-                                              Navigator.of(context).pop(); 
-                                              _deleteProblem(problem['docId'], problem['uid']); 
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: const Text("No", style: TextStyle(color: Colors.black, fontSize: 20),),
-                                            onPressed: () {
-                                            Navigator.of(context).pop(); 
-                                          },
-                                        ),
                                       ],
-                                    );
-                                  },
-                                ),
-                                  icon: Icon(Icons.delete),
-                                  color: Colors.red,
-                                  iconSize: 35,
-                                ),
-                              ],
-                            ),
-                          ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    color: Colors.red,
+                                    iconSize: 35,
+                                    onPressed: () => QuickAlert.show(
+                                      context: context,
+                                      type: QuickAlertType.warning,
+                                      confirmBtnText: 'Si',
+                                      onConfirmBtnTap: () {
+                                        _deleteProblem(problem['docId'], problem['uid']);
+                                        Navigator.of(context).pop();
+                                      },
+                                      showCancelBtn: true,
+                                      cancelBtnText: 'No',
+                                      onCancelBtnTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      confirmBtnColor: Colors.red,
+                                      title: '¿Esta segur@ que quiere borrar el reporte?',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  );
+                },
               ),
-            )
+            ),
           ],
         ),
       );
@@ -231,9 +225,11 @@ class DetailPage extends StatelessWidget {
             children: <Widget>[
               Center(
                 child: problem['imageLink'] != null
-                    ? Image.network(problem['imageLink'],
-                    height: 300,
-                    width: 300,)
+                    ? Image.network(
+                        problem['imageLink'],
+                        height: 300,
+                        width: 300,
+                      )
                     : Container(),
               ),
               const SizedBox(height: 8),
@@ -241,7 +237,8 @@ class DetailPage extends StatelessWidget {
                 preferredSize: Size.fromHeight(1),
                 child: Divider(
                   color: Color.fromARGB(255, 255, 103, 92),
-                  thickness: 5,),
+                  thickness: 5,
+                ),
               ),
               const SizedBox(height: 8),
               const Center(
@@ -260,7 +257,8 @@ class DetailPage extends StatelessWidget {
                 preferredSize: Size.fromHeight(1),
                 child: Divider(
                   color: Color.fromARGB(255, 255, 103, 92),
-                  thickness: 5,),
+                  thickness: 5,
+                ),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -282,9 +280,9 @@ class DetailPage extends StatelessWidget {
                 width: 350,
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Color.fromARGB(255, 219, 219, 219),
-              ),
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color.fromARGB(255, 219, 219, 219),
+                ),
                 child: Text(
                   problem['description'] ?? 'No description available.',
                   style: const TextStyle(fontSize: 16),

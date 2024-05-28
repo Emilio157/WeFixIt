@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/home_page_user.dart';
 import 'package:we_fix_it/ui/widgets/widget_pick_image.dart';
 import 'dart:math';
+import 'package:quickalert/quickalert.dart';
 
 String generateRandomName() {
   Random random = Random();
@@ -68,11 +69,11 @@ class _MyReportPageState extends State<MyReportPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Reporte enviado con éxito')),
         );
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Por favor complete todos los campos y seleccione una imagen')),
         );
-        Navigator.pop(context);
       }
     } catch (error) {
       print('Error al enviar el reporte: $error');
@@ -201,7 +202,6 @@ class _MyReportPageState extends State<MyReportPage> {
                   ),
                   onPressed: () {
                     saveReport();
-                    setState(() {});
                   },
                   child: Text(
                     'Enviar Reporte',
