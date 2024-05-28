@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:quickalert/quickalert.dart';
 
 class MyDiy extends StatefulWidget {
   const MyDiy({super.key});
@@ -70,28 +70,7 @@ class _MyDiyState extends State<MyDiy> {
       
                   final projects = snapshot.data!.docs;
       
-                  return /* ListView.builder(
-                    itemCount: projects.length,
-                    itemBuilder: (context, index) {
-                      final project = projects[index];
-                      return ListTile(
-                        leading: Image.network(project['imageLink']),
-                        title: Text(project['name']),
-                        subtitle: Text(project['date']),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteProject(project.id),
-                        ),
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProjectDetailScreen(project: project),
-                          ),
-                        ),
-                      );
-                    },
-                  ); */
-                  ListView.builder(
+                  return ListView.builder(
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   itemCount: projects.length,
@@ -160,15 +139,29 @@ class _MyDiyState extends State<MyDiy> {
                                         size: 24,
                                         color: Colors.red,
                                       ),
-                                      onPressed: () {
+                                      onPressed:
+                                        () => QuickAlert.show(
+                                      context: context,
+                                      type: QuickAlertType.warning,
+                                      confirmBtnText: 'Si',
+                                      onConfirmBtnTap: () {
                                         _deleteProject(project.id);
+                                        Navigator.of(context).pop();
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
                                             content: Text('Proyecto ' + project['name'] + ' fue elminiado'),
                                             duration: const Duration(seconds: 2),
-                                          ),
-                                        );
-                                      },
+                                           ),
+                                          );
+                                        },
+                                        showCancelBtn: true,
+                                        cancelBtnText: 'No',
+                                        onCancelBtnTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        confirmBtnColor: Colors.red,
+                                        title: '¿Esta segur@ que quiere borrar el proyecto?',
+                                        ),
                                     ),
                                 ],
                               ),

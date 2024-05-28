@@ -58,28 +58,35 @@ class EmployeeChatListScreen extends StatelessWidget {
                     future: FirebaseFirestore.instance.collection('userProblems').doc(problemId).get(),
                     builder: (context, problemSnapshot) {
                       if (!problemSnapshot.hasData) {
-                        return ListTile(
-                          title: Text(userName),
-                          subtitle: Text('Cargando problema...'),
+                        return Card(
+                          child: ListTile(
+                            title: Text(userName),
+                            subtitle: Text('Cargando problema...'),
+                          ),
                         );
                       }
                       var problemData = problemSnapshot.data!.data() as Map<String, dynamic>?;
                       var problemName = problemData != null ? problemData['problem'] : 'Desconocido';
 
-                      return ListTile(
-                        title: Text(userName),
-                        subtitle: Text('Problema: $problemName'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatUserScreen(
-                                receiverId: userId,
-                                problemId: problemId,
+                      return Card(
+                        shadowColor: Colors.black,
+                        color: const Color.fromARGB(255, 253, 95, 84),
+                        child: ListTile(
+                          leading: const Icon(Icons.person, size: 40, color: Colors.white,),
+                          title: Text(userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white,)),
+                          subtitle: Text('Problema: $problemName', style: const TextStyle(fontSize: 14, color: Colors.white,),),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatUserScreen(
+                                  receiverId: userId,
+                                  problemId: problemId,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       );
                     },
                   );

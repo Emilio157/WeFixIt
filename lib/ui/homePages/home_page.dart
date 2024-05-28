@@ -1,36 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:we_fix_it/ui/report_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quickalert/quickalert.dart';
 
 class MyInicio extends StatefulWidget {
-  const MyInicio({super.key});
+  const MyInicio({Key? key});
 
   @override
   State<MyInicio> createState() => _MyInicioState();
 }
 
 class _MyInicioState extends State<MyInicio> {
-  List<Map<String, dynamic>> problems = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _getProblems();
+  Future<void> _deleteProblem(String docId, String uid) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null && user.uid == uid) {
+      try {
+        await FirebaseFirestore.instance.collection('userProblems').doc(docId).delete();
+      } catch (e) {
+        print("Error deleting problem: $e");
+      }
+    } else {
+      print("No se tiene acceso para eliminar este problema");
+    }
   }
 
-  Future<void> _getProblems() async {
+  Stream<QuerySnapshot> _getProblemsStream() {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      final String uid = user.uid;
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
+      return FirebaseFirestore.instance
           .collection('userProblems')
-          .where('uid', isEqualTo: uid)
-          .get();
-      setState(() {
-        problems = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-      });
+          .where('uid', isEqualTo: user.uid)
+          .snapshots();
+    } else {
+      return const Stream.empty();
     }
   }
 
@@ -81,78 +85,115 @@ class _MyInicioState extends State<MyInicio> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 60),
-              child: Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemCount: problems.length,
-                  itemBuilder: (context, index) {
-                    final problem = problems[index];
-                    return GestureDetector(
-                      onTap: () => _navigateToDetailPage(context, problem),
-                      child: Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    problem['imageLink'],
-                                    height: 300,
-                                    width: 300,
-                                  ),
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _getProblemsStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No problems found.'));
+                  }
+
+                  final problems = snapshot.data!.docs.map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    data['docId'] = doc.id;
+                    return data;
+                  }).toList();
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemCount: problems.length,
+                    itemBuilder: (context, index) {
+                      final problem = problems[index];
+                      return GestureDetector(
+                        onTap: () => _navigateToDetailPage(context, problem),
+                        child: Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  problem['imageLink'],
+                                  height: 300,
+                                  width: 300,
                                 ),
-                            SizedBox(height: 10),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          problem['problem'],
-                                          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            problem['problem'],
+                                            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Fecha límite: " + problem['date'],
+                                          style: TextStyle(fontSize: 18),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text("Fecha límite: " +
-                                        problem['date'],
-                                        style: TextStyle(fontSize: 18),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 8),
-                              ],
-                            ),
-                          ],
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    color: Colors.red,
+                                    iconSize: 35,
+                                    onPressed: () => QuickAlert.show(
+                                      context: context,
+                                      type: QuickAlertType.warning,
+                                      confirmBtnText: 'Si',
+                                      onConfirmBtnTap: () {
+                                        _deleteProblem(problem['docId'], problem['uid']);
+                                        Navigator.of(context).pop();
+                                      },
+                                      showCancelBtn: true,
+                                      cancelBtnText: 'No',
+                                      onCancelBtnTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      confirmBtnColor: Colors.red,
+                                      title: '¿Esta segur@ que quiere borrar el reporte?',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  );
+                },
               ),
-            )
+            ),
           ],
         ),
       );
@@ -182,23 +223,70 @@ class DetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              problem['imageLink'] != null
-                  ? Image.network(problem['imageLink'])
-                  : Container(),
-              SizedBox(height: 16),
+              Center(
+                child: problem['imageLink'] != null
+                    ? Image.network(
+                        problem['imageLink'],
+                        height: 300,
+                        width: 300,
+                      )
+                    : Container(),
+              ),
+              const SizedBox(height: 8),
+              const PreferredSize(
+                preferredSize: Size.fromHeight(1),
+                child: Divider(
+                  color: Color.fromARGB(255, 255, 103, 92),
+                  thickness: 5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Center(
+                child: Text(
+                  "Problema: ",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 8),
               Text(
                 problem['problem'],
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
+              const PreferredSize(
+                preferredSize: Size.fromHeight(1),
+                child: Divider(
+                  color: Color.fromARGB(255, 255, 103, 92),
+                  thickness: 5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Fecha límite del problema : ",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
               Text(
-                "Fecha límite: " + problem['date'],
+                problem['date'],
                 style: TextStyle(fontSize: 18),
               ),
-              SizedBox(height: 8),
-              Text(
-                problem['description'] ?? 'No description available.',
-                style: TextStyle(fontSize: 16),
+              const SizedBox(height: 8),
+              const Text(
+                'Descripción del problema: ',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: 350,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color.fromARGB(255, 219, 219, 219),
+                ),
+                child: Text(
+                  problem['description'] ?? 'No description available.',
+                  style: const TextStyle(fontSize: 16),
+                ),
               ),
             ],
           ),

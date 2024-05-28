@@ -5,9 +5,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:we_fix_it/ui/homePages/home_page.dart';
+import 'package:we_fix_it/ui/home_page_user.dart';
 import 'package:we_fix_it/ui/widgets/widget_pick_image.dart';
 import 'dart:math';
+import 'package:quickalert/quickalert.dart';
 
 String generateRandomName() {
   Random random = Random();
@@ -68,6 +69,7 @@ class _MyReportPageState extends State<MyReportPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Reporte enviado con éxito')),
         );
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Por favor complete todos los campos y seleccione una imagen')),
@@ -200,10 +202,6 @@ class _MyReportPageState extends State<MyReportPage> {
                   ),
                   onPressed: () {
                     saveReport();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyInicio()),
-                    );
                   },
                   child: Text(
                     'Enviar Reporte',
