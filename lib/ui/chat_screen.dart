@@ -58,44 +58,45 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
   }
 
  void _endChat() async {
-  if (user == null) return;
+    if (user == null) return;
+    String chatId = _generateChatId(user!.uid, widget.receiverId, widget.problemId);
 
-  String chatId = _generateChatId(user!.uid, widget.receiverId, widget.problemId);
+    try {
+      var messagesSnapshot = await FirebaseFirestore.instance
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .get();
 
-  try {
-    var messagesSnapshot = await FirebaseFirestore.instance
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages')
-        .get();
+      for (var doc in messagesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+      
+      await FirebaseFirestore.instance.collection('chats').doc(chatId).delete();
 
-    for (var doc in messagesSnapshot.docs) {
-      await doc.reference.delete();
+      QuerySnapshot helpRequestSnapshot = await FirebaseFirestore.instance
+          .collection('helpRequests')
+          .where('problemId', isEqualTo: widget.problemId)
+          .where('userId', isEqualTo: user!.uid)
+          .where('employeeId', isEqualTo: widget.receiverId)
+          .get();
+
+      for (var doc in helpRequestSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Chat finalizado')),
+      );
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      print("Error ending chat: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al finalizar el chat: $e')),
+      );
     }
-
-    await FirebaseFirestore.instance.collection('chats').doc(chatId).delete();
-
-    QuerySnapshot helpRequestSnapshot = await FirebaseFirestore.instance
-        .collection('helpRequests')
-        .where('problemId', isEqualTo: widget.problemId)
-        .get();
-
-    for (var doc in helpRequestSnapshot.docs) {
-      await doc.reference.delete();
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Chat finalizado')),
-    );
-
-    Navigator.of(context).pop();
-  } catch (e) {
-    print("Error ending chat: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error al finalizar el chat: $e')),
-    );
   }
-}
 
   void _showFinalizeDialog() {
     
