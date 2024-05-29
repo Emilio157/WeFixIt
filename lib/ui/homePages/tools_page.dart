@@ -125,8 +125,8 @@ class _MyToolsState extends State<MyTools> {
   }
 
   void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(url as Uri)) {
+      await launchUrl(url as Uri);
     } else {
       throw 'No se pudo abrir el enlace $url';
     }

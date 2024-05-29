@@ -331,39 +331,3 @@ Future<bool> checkDuplicateRequest(String userId, String employeeId, String prob
     );
   }
 }
-
-
-
-
-
-
-//Lista antigua de visualizacion
-/* Card(
-      margin: EdgeInsets.all(10),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(10),
-        title: Text(
-          problem['problem'],
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          "Fecha límite: " + problem['date'],
-          style: TextStyle(fontSize: 14),
-        ),
-        leading: problem['imageLink'] != null
-            ? Image.network(problem['imageLink'], width: 70, height: 70, fit: BoxFit.cover)
-            : null,
-        trailing: IconButton(
-          icon: Icon(Icons.help_outline),
-          onPressed: () => _sendHelpRequest(context),
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailPage(problem: problem),
-            ),
-          );
-        },
-      ),
-    ); */

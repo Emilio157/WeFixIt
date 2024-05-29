@@ -256,7 +256,7 @@ class _RegisterPageState extends State<RegisterPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          "Eres un contractor",
+          "Eres un contratista",
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,

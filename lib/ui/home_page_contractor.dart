@@ -4,7 +4,7 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:we_fix_it/ui/contractorHomePages/chats_by_contractor.dart';
-import 'package:we_fix_it/ui/contractorHomePages/user_posts.dart';
+import 'package:we_fix_it/ui/contractorHomePages/user_posts_by_contractor.dart';
 import 'package:we_fix_it/ui/profile_page.dart';
 
 class HomePageContractor extends StatefulWidget {

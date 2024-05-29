@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:we_fix_it/ui/report_page.dart';
+import 'package:we_fix_it/ui/homePages/report_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quickalert/quickalert.dart';
